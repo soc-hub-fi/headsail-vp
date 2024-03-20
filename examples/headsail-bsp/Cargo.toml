@@ -26,3 +26,13 @@ riscv = { version = "0.11.1", optional = true }
 name = "panic"
 path = "examples/panic.rs"
 required-features = ["panic-uart", "rt"]
+
+[[example]]
+name = "uart0"
+path = "examples/uart0.rs"
+required-features = ["rt"]
+
+[[example]]
+name = "sprintln"
+path = "examples/sprintln.rs"
+required-features = ["rt"]
