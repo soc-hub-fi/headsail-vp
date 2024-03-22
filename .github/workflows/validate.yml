@@ -9,7 +9,7 @@ on:
 env:
   CI: 1
   CARGO_TERM_COLOR: always
-  RENODE_PATH: /opt/renode/
+  RENODE_DIR: /opt/renode/
   # Used by renode-test to generate snapshots of failed tests
   RENODE_CI_MODE: YES
 
@@ -51,7 +51,7 @@ jobs:
       with:
         name: dla-debug
     - name: Create Renode peripheral symlinks
-      run: ln -s $(readlink -f "./vp/devel/python_peripherals/DLA.py") "$RENODE_PATH/scripts/pydev/DLA.py"
+      run: ln -s $(readlink -f "./vp/devel/python_peripherals/DLA.py") "$RENODE_DIR/scripts/pydev/DLA.py"
     - name: Run example
       run: renode-test scripts/robot/hello_dla.robot --variable BIN:"$(readlink -f $BIN)"
     - name: Upload snapshots
