@@ -2,8 +2,6 @@
 
 # Runs compiled ELF from $BIN or param $1 on SysCtrl
 
-set -x # echo on
-
 BASEDIR=$(dirname "$0")
 $BASEDIR/setup_renode.sh
 
