@@ -2,7 +2,7 @@
 #![no_main]
 
 use headsail_bsp::{rt::entry, sprintln};
-use hello_dla::*;
+use dla_driver::*;
 use panic_halt as _;
 
 #[entry]

@@ -57,6 +57,7 @@ BUF_WIDTH_OFFSET = 0
 BUF_HEIGHT_OFFSET = 9
 BUF_CHANNELS_OFFSET = 18
 
+
 # Buffer kernel 0
 BUF_KERNEL_0 = 0x18
 BUF_KERNEL_0_WIDTH_OFFSET = 0
@@ -150,8 +151,8 @@ HANDSHAKE_BIAS_ENABLE_OFFSET = 8
 HANDSHAKE_BYPASS_ENABLE_OFFSET = 9
 
 # Utilities
-def reshape_to_CWH(data):
-    """Takes tensor in HWC format and reshapes it to CWH"""
+def reshape_to_cwh(data):
+    """Takes tensor in [height, width, channel] format and reshapes it to [channel, width, height]"""
     in_channels = len(data[0][0])
     in_width = len(data[0])
     in_heigth = len(data)
@@ -324,11 +325,11 @@ class MemoryBank:
         return self.size - self.idx
 
 
-class DLA:
+class Dla:
     """Implements control flow and MMIO registers of DLA. This should be the top level component."""
     def __init__(self):
         self.mem = bytearray(MEM_SIZE) # Memory initalizaed
-        self.mac = DLAMAC()
+        self.mac = DlaMac()
         # Initialize memory banks
         self.banks = [MemoryBank(MEMORY_BANK_SIZE) for x in range(0, NO_MEMORY_BANKS)]
 
@@ -682,7 +683,7 @@ class DLA:
         self.set_register(STATUS_ADDR, PP_DONE_OFFSET, 1, 0x0)
 
 
-class DLAMAC:
+class DlaMac:
     """Implement DLA's MAC array operations Conv2d, Bias and ReLU"""
     def __init__(self):
         self.name = "DLA MAC"
@@ -892,10 +893,10 @@ class DLAMAC:
 #     API     #
 
 def write(request, dla):
-    self.NoisyLog("Writing request: %s at 0x%x, value 0x%x" % (str(request.type), request.absolute, request.value))
+    self.NoisyLog("Absolute: 0x%x  Writing request offset: %s at 0x%x, value 0x%x" % (request.absolute, str(request.type), request.offset, request.value))
+    print("Absolute: 0x%x  Writing request offset: %s at 0x%x, value 0x%x" % (request.absolute, str(request.type), request.offset, request.value))
     if int(request.absolute) >= DLA_ADDR:
-        print("Writing request: %s at 0x%x, value 0x%x" % (str(request.type), request.absolute, request.value))
-        dla.mem[request.offset] = request.value & 0xFF
+        dla.set_register(request.offset, 0, 32, request.value)
     else:
         # TODO: implement bank writing
         dla.handle_bank_write(request)
@@ -903,16 +904,16 @@ def write(request, dla):
 
 def read(request, dla):
     self.NoisyLog("Reading request: %s at 0x%x, value 0x%x" % (str(request.type), request.absolute, request.value))
-    print("Reading request: %s at 0x%x, value 0x%x" % (str(request.type), request.absolute, request.value))
+    print("Absolute: 0x%x  Reading request offset: %s at 0x%x, value 0x%x" % (request.absolute, str(request.type), request.offset, request.value))
     if int(request.absolute) >= DLA_ADDR:
-        request.value = dla.mem[request.offset]
+        request.value = dla.get_register(request.offset, 0, 32)
     else:
         request.value = 0 # TODO: Add bank reading here
 
 
 if __name__ == "__main__":
     print("Running as independent module")
-    dla = DLA()
+    dla = Dla()
 
     A_ch, A_h, A_w = 3, 5, 5
     B_ch, B_h, B_w = 1, 3, 3
@@ -934,8 +935,8 @@ if __name__ == "__main__":
     # Generate 256 x 256 image
     A = [[[random.randint(-1,1) for _ in range(A_ch) ] for _ in range(A_h)] for _ in range(A_w)]
     B = [[[random.randint(-1, 1) for _ in range(B_ch) ] for _ in range(B_h)] for _ in range(B_w)]
-    A = reshape_to_CWH(A) # HWC to CWH
-    B = reshape_to_CWH(B)
+    A = reshape_to_cwh(A) # HWC to CWH
+    B = reshape_to_cwh(B)
 
     A = separate_channels(A) # CHW to 2D
     B = separate_channels(B)
@@ -967,10 +968,11 @@ if __name__ == "__main__":
 
 else:
     if request.isInit:
-        dla = DLA()
+        dla = Dla()
         print("%s initialized" % NAME)
         self.NoisyLog("%s initialized" % NAME)
     elif request.isRead:
+        print("isRead")
         read(request, dla)
     elif request.isWrite:
         write(request, dla)

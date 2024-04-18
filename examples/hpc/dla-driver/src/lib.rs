@@ -14,13 +14,8 @@ pub enum SimdBitMode {
 
 macro_rules! set_bits {
     ($offset:expr, $mask:expr, $reg:expr, $value:expr) => {
-        (($reg & !($mask)) | ($value << $offset)) as usize
+        (($reg & !($mask as u32)) | ($value << $offset) as u32) as u32
     };
-}
-pub fn uart_write(s: &str) {
-    for b in s.as_bytes() {
-        unsafe { ptr::write_volatile(UART0_ADDR as *mut u8, *b) };
-    }
 }
 
 pub fn dla_write_str(s: &str) {
@@ -32,23 +27,12 @@ pub fn dla_write(offset: usize, value: u8) {
     unsafe { ptr::write_volatile((offset) as *mut u8, value) };
 }
 
-pub fn dla_write_reg(offset: usize, value: usize) {
-    let bytes = value.to_le_bytes();
-    for i in 0..4 {
-        unsafe { ptr::write_volatile((DLA0_ADDR + offset + i) as *mut u8, bytes[i]) };
-    }
+pub fn dla_write_reg(offset: usize, value: u32) {
+    unsafe { ptr::write_volatile((DLA0_ADDR + offset) as *mut u32, value) }
 }
 
-pub fn dla_read_reg(offset: usize) -> usize {
-    sprint!("offset {:#x}", offset);
-    let mut buf: [u8; 4] = [0; 4];
-    for i in 0..4 {
-        unsafe { buf[i] = ptr::read_volatile((DLA0_ADDR + offset + i) as *mut u8) }
-    }
-    return (((buf[0] as u32) << 0)
-        + ((buf[1] as u32) << 8)
-        + ((buf[2] as u32) << 16)
-        + ((buf[3] as u32) << 24)) as usize;
+pub fn dla_read_reg(offset: usize) -> u32 {
+    unsafe { ptr::read_volatile((DLA0_ADDR + offset) as *mut u32) }
 }
 
 pub fn dla_read(buf: &mut [u8], len: usize, offset: usize) {
@@ -229,7 +213,7 @@ pub fn dla_set_bias_address(addr: usize) {
     dla_write_reg(DLA_PP_AXI_READ, reg);
 }
 
-pub fn dla_get_status() -> usize {
+pub fn dla_get_status() -> u32 {
     return dla_read_reg(DLA_STATUS_ADDR);
 }
 
@@ -277,7 +261,7 @@ pub fn dla_set_pp_rounding(enable: bool) {
     dla_write_reg(DLA_PP_CTRL, reg);
 }
 
-pub fn dla_set_bias_addr(addr: usize) {
+pub fn dla_set_bias_addr(addr: u32) {
     dla_write_reg(DLA_PP_AXI_READ, addr);
 }
 
@@ -321,6 +305,4 @@ pub fn dla_init() {
 
     dla_kernel_data_ready(true);
     dla_input_data_ready(true);
-
-    return;
 }
