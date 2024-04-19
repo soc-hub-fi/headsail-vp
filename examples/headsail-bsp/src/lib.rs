@@ -6,7 +6,7 @@ pub mod uart;
 
 #[cfg(feature = "hpc")]
 pub use hpc::*;
-#[cfg(any(feature = "rt"))]
+#[cfg(feature = "rt")]
 pub use riscv_rt as rt;
 pub use ufmt;
 
