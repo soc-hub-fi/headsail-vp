@@ -22,10 +22,12 @@ rt = ["dep:riscv-rt", "dep:riscv"]
 
 [dependencies]
 ufmt = "0.2.0"
-riscv-rt = { version = "0.12.2", optional = true }
-riscv = { version = "0.11.1", optional = true }
-riscv-peripheral = { version = "0.1.0", optional = true }
-riscv-pac = { version = "0.1.1", optional = true }
+riscv-rt = { version = "0.13", git = "https://github.com/rust-embedded/riscv", branch = "vectored-rt", optional = true, features = [
+    "v-trap",
+] }
+riscv = { git = "https://github.com/rust-embedded/riscv", branch = "vectored-rt", optional = true }
+riscv-peripheral = { git = "https://github.com/rust-embedded/riscv", branch = "vectored-rt", optional = true }
+riscv-pac = { git = "https://github.com/rust-embedded/riscv", branch = "vectored-rt", optional = true }
 
 [[example]]
 name = "panic"
