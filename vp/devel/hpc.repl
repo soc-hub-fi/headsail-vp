@@ -1,22 +1,38 @@
 cpu_hpc0: CPU.RiscV64 @ sysbus
     cpuType: "rv64imac"
     hartId: 0
-    timeProvider: empty
+    timeProvider: clint
 
 cpu_hpc1: CPU.RiscV64 @ sysbus
     cpuType: "rv64imac"
     hartId: 1
-    timeProvider: empty
+    timeProvider: clint
 
 cpu_hpc2: CPU.RiscV64 @ sysbus
     cpuType: "rv64imac"
     hartId: 2
-    timeProvider: empty
+    timeProvider: clint
 
 cpu_hpc3: CPU.RiscV64 @ sysbus
     cpuType: "rv64imac"
     hartId: 3
-    timeProvider: empty
+    timeProvider: clint
 
 sdram: Memory.MappedMemory @ sysbus 0x10000000
     size: 0x60000000
+
+/*
+ * CLINT <> [^1]
+ *
+ * [IP](https://gitlab.tuni.fi/soc-hub/common/hw/cva6/-/tree/master/corev_apu/clint)
+ * [Specification](https://github.com/pulp-platform/clint) (unconfirmed)
+ */
+clint: IRQControllers.CoreLevelInterruptor  @ sysbus 0x60000
+    [0, 1] -> cpu_hpc0@[3, 7] // msoft, mtimer
+    [2, 3] -> cpu_hpc1@[3, 7] // msoft, mtimer
+    [4, 5] -> cpu_hpc2@[3, 7] // msoft, mtimer
+    [6, 7] -> cpu_hpc3@[3, 7] // msoft, mtimer
+    numberOfTargets: 4
+    frequency: 100000 // we guess board reference frequency
+
+// [^1]: [HPC SS (GitLab Pages)](https://soc-hub.gitlab-pages.tuni.fi/headsail/hw/hpc-ss/)
