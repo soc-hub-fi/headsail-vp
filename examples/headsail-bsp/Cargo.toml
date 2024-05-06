@@ -55,8 +55,4 @@ required-features = ["alloc", "rt", "sdram"]
 [[example]]
 name = "timer0"
 path = "examples/timer0.rs"
-<<<<<<< HEAD
 required-features = ["rt"]
-=======
-required-features = ["vp"]
->>>>>>> Add PULP timer_unit driver for timer0 (VP ONLY)
