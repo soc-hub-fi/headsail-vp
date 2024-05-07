@@ -9,21 +9,20 @@
  */
 use crate::{mmap::TIMER0_ADDR, read_u32, write_u32};
 
-extern crate bit_field;
 use bit_field::BitField;
 
 const TIMER0_CTRL_REG_OFFSET: usize = 0x0;
 const TIMER0_COUNTER_REG_OFFSET: usize = 0x8;
-const TIMER0_ENABLE_BIT: u32 = 0b0;
+const TIMER0_ENABLE_BIT: usize = 0b0;
 
 #[inline]
 pub fn timer0_enable() {
     // Read register
     let mut reg = read_u32(TIMER0_ADDR + TIMER0_CTRL_REG_OFFSET);
     // Make enable bit 1
-    reg.set_bit(TIMER0_ENABLE_BIT as usize, true);
+    reg.set_bit(TIMER0_ENABLE_BIT, true);
     // Write register back
-    write_u32(TIMER0_ADDR + TIMER0_CTRL_REG_OFFSET, reg as u32);
+    write_u32(TIMER0_ADDR + TIMER0_CTRL_REG_OFFSET, reg);
 }
 
 #[inline]
@@ -33,11 +32,10 @@ pub fn timer0_disable() {
     // Write 0 to bit 0 but leave all other bits untouched
     reg.set_bit(TIMER0_ENABLE_BIT as usize, false);
     // Write register back
-    write_u32(TIMER0_ADDR + TIMER0_CTRL_REG_OFFSET, reg as u32);
+    write_u32(TIMER0_ADDR + TIMER0_CTRL_REG_OFFSET, reg);
 }
 
 #[inline]
-#[cfg(debug_assertions)]
 pub fn timer0_get_count() -> u32 {
     return read_u32(TIMER0_ADDR + TIMER0_COUNTER_REG_OFFSET);
 }
