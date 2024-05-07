@@ -15,6 +15,9 @@ const TIMER0_CTRL_REG_OFFSET: usize = 0x0;
 const TIMER0_COUNTER_REG_OFFSET: usize = 0x8;
 const TIMER0_ENABLE_BIT: usize = 0b0;
 
+/**
+ * Enables the timer (starts counting).
+ */
 #[inline]
 pub fn timer0_enable() {
     // Read register
@@ -25,6 +28,9 @@ pub fn timer0_enable() {
     write_u32(TIMER0_ADDR + TIMER0_CTRL_REG_OFFSET, reg);
 }
 
+/**
+ * Disables the timer (stops counting).
+ */
 #[inline]
 pub fn timer0_disable() {
     // Read register
@@ -35,6 +41,9 @@ pub fn timer0_disable() {
     write_u32(TIMER0_ADDR + TIMER0_CTRL_REG_OFFSET, reg);
 }
 
+/**
+ * Returns the timer counter (tick value).
+ */
 #[inline]
 pub fn timer0_get_count() -> u32 {
     return read_u32(TIMER0_ADDR + TIMER0_COUNTER_REG_OFFSET);
