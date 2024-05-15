@@ -1,0 +1,22 @@
+configure:
+    #!/usr/bin/env bash
+    set -euxo pipefail
+    source ./scripts/export_riscv.env
+    mkdir -p build
+    cd build
+    cmake ..
+
+build: configure
+    #!/usr/bin/env bash
+    set -euxo pipefail
+    source ./scripts/export_riscv.env
+    cd build
+    make
+
+run: build
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/../../../
+    ./scripts/run_on_hpc.sh {{justfile_directory()}}/build/main
+
+clean:
+    rm -rf build/
