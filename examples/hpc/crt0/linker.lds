@@ -8,11 +8,6 @@
 /* Applied original linker structure for singular memory region.*/
 OUTPUT_ARCH("riscv")
 
-/* Default Linker Script
- *
- * This is the default linker script for all Freedom Metal applications.
- */
-
 ENTRY(_enter)
 
 MEMORY
