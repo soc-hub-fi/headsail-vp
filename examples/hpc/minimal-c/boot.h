@@ -19,9 +19,6 @@ extern uint8_t metal_segment_bss_target_end;
 extern const uint8_t metal_segment_data_source_start;
 extern uint8_t metal_segment_data_target_start;
 extern uint8_t metal_segment_data_target_end;
-extern const uint8_t metal_segment_itim_source_start;
-extern uint8_t metal_segment_itim_target_start;
-extern uint8_t metal_segment_itim_target_end;
 
 extern function_t __init_array_start;
 extern function_t __init_array_end;
@@ -75,11 +72,6 @@ void _start(void) {
     memcpy((void*)&metal_segment_data_target_start,
            (const void*)&metal_segment_data_source_start,
            (&metal_segment_data_target_end - &metal_segment_data_target_start));
-
-    // Initialize the .itim section (code moved from flash to SRAM to improve performance)
-    memcpy((void*)&metal_segment_itim_target_start,
-           (const void*)&metal_segment_itim_source_start,
-           (&metal_segment_itim_target_end - &metal_segment_itim_target_start));
 
     // Call constructors
     for (const function_t* entry=&__init_array_start;

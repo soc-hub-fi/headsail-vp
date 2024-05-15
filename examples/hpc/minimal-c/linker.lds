@@ -26,7 +26,6 @@ PHDRS
     ram_init PT_LOAD;
     tls PT_TLS;
     ram PT_LOAD;
-    itim_init PT_LOAD;
     text PT_LOAD;
     lim_init PT_LOAD;
 }
@@ -83,8 +82,6 @@ SECTIONS
     /* The RAM memories map for ECC scrubbing */
     PROVIDE( metal_dtim_0_memory_start = 0x80000000 );
     PROVIDE( metal_dtim_0_memory_end = 0x80000000 + 0x4000 );
-    PROVIDE( metal_itim_0_memory_start = 0x8000000 );
-    PROVIDE( metal_itim_0_memory_end = 0x8000000 + 0x2000 );
 
     /* RAM SECTION
      *
@@ -166,24 +163,6 @@ SECTIONS
         *(.srodata .srodata.*)
     } >ram :ram
 
-    /* ITIM SECTION
-     *
-     * The following sections contain data which is copied fram read-only
-     * memory into an instruction tightly-integrated memory (ITIM), if one
-     * is present in the design, during pre-main program initialization.
-     *
-     * Generally, the data copied into the ITIM should be performance-critical
-     * functions which benefit fram low instruction-fetch latency.
-     */
-
-    .itim : ALIGN(8) {
-        *(.itim .itim.*)
-    } >ram AT>ram :itim_init
-
-    PROVIDE( metal_segment_itim_source_start = LOADADDR(.itim) );
-    PROVIDE( metal_segment_itim_target_start = ADDR(.itim) );
-    PROVIDE( metal_segment_itim_target_end = ADDR(.itim) + SIZEOF(.itim) );
-
     /* LIM SECTION
      *
      * The following sections contain data which is copied fram read-only
@@ -204,8 +183,7 @@ SECTIONS
 
     /* TEXT SECTION
      *
-     * The following section contains the code of the program, excluding
-     * everything that's been allocated into the ITIM/LIM already
+     * The following section contains the code of the program
      */
 
     .text : {
