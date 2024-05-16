@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR riscv64)
 
-project(RISCV_Compiler C)
+project(test-bsp-ffi C)
 
 # Add C-runtime 0
 set(CRT0 ${CMAKE_CURRENT_SOURCE_DIR}/../crt0)
@@ -20,16 +20,13 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Os -march=rv64imac -nostartfiles -mabi=l
 set(SOURCE_FILES main.c)
 
 # Add the executable target
-add_executable(main ${SOURCE_FILES})
-
-# Add dependencies to ensure build_hpc is executed before building the main target
-add_dependencies(main build_hpc)
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
 
 # Add C-runtime 0 header
-target_include_directories(main PRIVATE ${CRT0})
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CRT0})
 
 # Add BSP header
-target_include_directories(main PRIVATE ${BSP_INCLUDE_DIR})
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${BSP_INCLUDE_DIR})
 
 # Link bsp static lib
-target_link_libraries(main ${BSP_LIBRARIES})
+target_link_libraries(${CMAKE_PROJECT_NAME} ${BSP_LIBRARIES})

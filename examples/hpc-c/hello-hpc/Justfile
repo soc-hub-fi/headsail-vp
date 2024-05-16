@@ -17,7 +17,7 @@ build: configure
     make
 
 run: build
-    {{root_dir}}/scripts/run_on_hpc.sh {{justfile_directory()}}/build/main
+    {{root_dir}}/scripts/run_on_hpc.sh {{justfile_directory()}}/build/hello-hpc
 
 clean:
     rm -rf build/

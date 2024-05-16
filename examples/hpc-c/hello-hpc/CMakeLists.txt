@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR riscv64)
 
-project(RISCV_Compiler C)
+project(hello-hpc C)
 
 # Add C-runtime 0
 set(CRT0 ${CMAKE_CURRENT_SOURCE_DIR}/../crt0)
@@ -19,7 +19,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -march=rv64imac -nostartfiles -mabi=lp64 
 set(SOURCE_FILES main.c)
 
 # Add the executable target
-add_executable(main ${SOURCE_FILES})
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCE_FILES})
 
 # Add header
-target_include_directories(main PRIVATE ${CRT0})
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CRT0})
