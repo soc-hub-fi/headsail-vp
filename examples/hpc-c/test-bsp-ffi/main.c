@@ -6,8 +6,8 @@
 
 int main()
 {
-    const char *hello = "Hello world!";
-    const char *str2 = "This is the BSP printing.";
+    const char *hello = "Hello world!\r\n";
+    const char *str2 = "This is the BSP printing.\r\n";
 
     for (int i = 0; i < strlen(hello); i++)
     {
@@ -15,7 +15,7 @@ int main()
     }
     for (int i = 0; i < strlen(str2); i++)
     {
-        putc(hello[i]);
+        putc(str2[i]);
     }
 
     return 0;

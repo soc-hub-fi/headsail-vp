@@ -13,7 +13,7 @@ void putc(char ch)
 
 int main()
 {
-    const char *str = "Hello world!";
+    const char *str = "Hello world!\r\n";
 
     for (int i = 0; i < strlen(str); i++)
     {
