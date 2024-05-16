@@ -182,6 +182,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Install requirements
+      run: cargo install just
     - name: Build minimal C project
       working-directory: ./examples/hpc-c/hello-hpc
       run: just build
@@ -197,6 +199,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Install requirements
+      run: cargo install just
     - name: Build minimal C project
       working-directory: ./examples/hpc-c/test-bsp-ffi
       run: just build
