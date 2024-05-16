@@ -58,26 +58,6 @@ SECTIONS
      */
     __heap_size = DEFINED(__heap_size) ? __heap_size : 0x800;
 
-    /* The boot hart sets which hart runs the pre-main initialization routines,
-     * including copying .data into RAM, zeroing the BSS region, running
-     * constructors, etc. After initialization, the boot hart is also the only
-     * hart which runs application code unless the application overrides the
-     * secondary_main() function to start execution on secondary harts.
-     */
-    PROVIDE(__metal_boot_hart = 0);
-
-    /* The chicken bit is used by pre-main initialization to enable/disable
-     * certain core features */
-    PROVIDE(__metal_chicken_bit = 1);
-
-    /* The memory_ecc_scrub bit is used by _entry code to enable/disable
-     * memories scrubbing to zero  */
-    PROVIDE(__metal_eccscrub_bit = 0);
-
-    /* The RAM memories map for ECC scrubbing */
-    PROVIDE( metal_dtim_0_memory_start = 0x80000000 );
-    PROVIDE( metal_dtim_0_memory_end = 0x80000000 + 0x4000 );
-
     /* RAM SECTION
      *
      * The following sections contain data which lives in read-only memory, if
@@ -86,12 +66,11 @@ SECTIONS
      */
 
     .init : {
-        /* The _enter symbol is placed in the .text.metal.init.enter section
+        /* The _enter symbol is placed in the .text.init.enter section
          * and must be placed at the beginning of the program */
-        KEEP (*(.text.metal.init.enter))
-        KEEP (*(.text.metal.init.*))
+        KEEP (*(.text.init.enter))
+        KEEP (*(.text.init.*))
         KEEP (*(SORT_NONE(.init)))
-        KEEP (*(.text.libgloss.start))
     } >ram :ram
 
     .fini : {
@@ -120,7 +99,6 @@ SECTIONS
         KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
         KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
         PROVIDE_HIDDEN (__fini_array_end = .);
-        PROVIDE_HIDDEN ( metal_destructors_start = .);
         KEEP (*(SORT_BY_INIT_PRIORITY(.metal.fini_array.*)));
         KEEP (*(.metal.fini_array));
         PROVIDE_HIDDEN ( metal_destructors_end = .);
