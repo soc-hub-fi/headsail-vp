@@ -183,7 +183,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install requirements
-      run: cargo install just
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc-riscv64-unknown-elf
+        cargo install just
     - name: Build minimal C project
       working-directory: ./examples/hpc-c/hello-hpc
       run: just build
@@ -200,7 +203,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install requirements
-      run: cargo install just
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc-riscv64-unknown-elf
+        cargo install just
     - name: Build minimal C project
       working-directory: ./examples/hpc-c/test-bsp-ffi
       run: just build
