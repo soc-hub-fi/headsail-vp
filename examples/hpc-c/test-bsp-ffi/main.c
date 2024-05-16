@@ -5,7 +5,7 @@
 #include "headsail_bsp.h"
 
 int main() {
-    const char *str = "Hello world";
+    const char *str = "Hello world (bsp::putc)";
 
     for (int i = 0; i < strlen(str); i++) {
         putc(str[i]);
