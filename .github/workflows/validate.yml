@@ -177,3 +177,81 @@ jobs:
     - name: Build FFI without RT on HPC
       working-directory: ./examples/headsail-bsp-ffi
       run: cargo build --target=riscv64imac-unknown-none-elf -Fpanic-uart
+
+  build-minimal-c:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build minimal C project
+      working-directory: ./examples/hpc-c/hello-hpc
+      run: just build
+    - name: Upload binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: hello-hpc-c.elf
+        path: ./examples/hpc-c/hello-hpc/build/hello-hpc
+        if-no-files-found: error
+        retention-days: 14
+
+  build-ffi-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build minimal C project
+      working-directory: ./examples/hpc-c/test-bsp-ffi
+      run: just build
+    - name: Upload binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bsp-ffi.elf
+        path: ./examples/hpc-c/test-bsp-ffi/build/test-bsp-ffi
+        if-no-files-found: error
+        retention-days: 14
+
+  run-minimal-c:
+    needs: build-minimal-c
+
+    runs-on: ubuntu-latest
+    container:
+      image: antmicro/renode:1.14.0
+      options: --user root
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download binary
+      uses: actions/download-artifact@v4
+      with:
+        name: hello-hpc-c.elf
+    - name: Create Renode peripheral symlinks
+      run: ln -s $(readlink -f "./vp/devel/python_peripherals/DLA.py") "$RENODE_DIR/scripts/pydev/DLA.py"
+    - name: Run example
+      run: renode-test scripts/robot/is_hello.robot --variable BIN:"$(readlink -f hello-hpc-c.elf)"
+    - name: Upload snapshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        path: snapshots/
+
+  run-ffi-test:
+    needs: build-ffi-test
+
+    runs-on: ubuntu-latest
+    container:
+      image: antmicro/renode:1.14.0
+      options: --user root
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download binary
+      uses: actions/download-artifact@v4
+      with:
+        name: test-bsp-ffi.elf
+    - name: Create Renode peripheral symlinks
+      run: ln -s $(readlink -f "./vp/devel/python_peripherals/DLA.py") "$RENODE_DIR/scripts/pydev/DLA.py"
+    - name: Run example
+      run: renode-test scripts/robot/is_hello.robot --variable BIN:"$(readlink -f test-bsp-ffi.elf)"
+    - name: Upload snapshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        path: snapshots/
