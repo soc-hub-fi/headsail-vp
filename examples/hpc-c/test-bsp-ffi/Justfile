@@ -22,4 +22,5 @@ run: build
 clean:
     rm -rf build/
 
-clean-run: clean run
+clean-build: clean build
+clean-run: clean-build run
