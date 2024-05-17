@@ -7,7 +7,7 @@
  *
  * Documentation: https://github.com/pulp-platform/timer_unit/tree/master
  */
-use crate::{mmap::TIMER0_ADDR, read_u32, write_u32};
+use crate::{mmap::*, read_u32, write_u32};
 
 use bit_field::BitField;
 
@@ -60,3 +60,6 @@ impl<const BASE_ADDRESS: usize> TimerUnit<BASE_ADDRESS>{
 }
 
 pub type Timer0 = TimerUnit::<TIMER0_ADDR>;
+pub type Timer1 = TimerUnit::<TIMER1_ADDR>;
+pub type Timer2 = TimerUnit::<TIMER2_ADDR>;
+pub type Timer3 = TimerUnit::<TIMER3_ADDR>;
