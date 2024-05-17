@@ -15,9 +15,9 @@ use bit_field::BitField;
  * base address for the timer. This driver is ASIC only. For the Virtual 
  * Prototype driver, please enable the "vp" feature.
  */
-pub struct APBTimer<const BASE_ADDRESS: usize>;
+pub struct ApbTimer<const BASE_ADDRESS: usize>;
 
-impl<const BASE_ADDRESS: usize> APBTimer<BASE_ADDRESS>{
+impl<const BASE_ADDRESS: usize> ApbTimer<BASE_ADDRESS>{
     const TIMER_COUNTER_REG_OFFSET: usize = 0x0;
     const TIMER_CTRL_REG_OFFSET: usize = 0x4;
     const TIMER_CMP_REG_OFFSET: usize = 0x8;
@@ -68,10 +68,10 @@ impl<const BASE_ADDRESS: usize> APBTimer<BASE_ADDRESS>{
 }
 
 ///Type alias that should be used to interface timer 0.
-pub type Timer0 = APBTimer::<TIMER0_ADDR>;
+pub type Timer0 = ApbTimer::<TIMER0_ADDR>;
 ///Type alias that should be used to interface timer 1.
-pub type Timer1 = APBTimer::<TIMER1_ADDR>;
+pub type Timer1 = ApbTimer::<TIMER1_ADDR>;
 ///Type alias that should be used to interface timer 2.
-pub type Timer2 = APBTimer::<TIMER2_ADDR>;
+pub type Timer2 = ApbTimer::<TIMER2_ADDR>;
 ///Type alias that should be used to interface timer 3.
-pub type Timer3 = APBTimer::<TIMER3_ADDR>;
+pub type Timer3 = ApbTimer::<TIMER3_ADDR>;
