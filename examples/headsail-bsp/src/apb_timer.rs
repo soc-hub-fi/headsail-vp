@@ -44,7 +44,7 @@ impl<const BASE_ADDRESS: usize> ApbTimer<BASE_ADDRESS>{
         // Read register
         let mut reg = read_u32(BASE_ADDRESS + Self::TIMER_CTRL_REG_OFFSET);
         // Write 0 to bit 0 but leave all other bits untouched
-        reg.set_bit(Self::TIMER_ENABLE_BIT as usize, false);
+        reg.set_bit(Self::TIMER_ENABLE_BIT, false);
         // Write register back
         write_u32(BASE_ADDRESS + Self::TIMER_CTRL_REG_OFFSET, reg);
     }
