@@ -1,4 +1,4 @@
-/**
+/*!
  * Date: 6/5/2024
  * Author: Andreas Stergiopoulos (andreas.stergiopoulos@tuni.fi)
  *
@@ -11,6 +11,11 @@ use crate::{mmap::*, read_u32, write_u32};
 
 use bit_field::BitField;
 
+/**
+ * Relocatable driver for the PULP Timer Unit IP. The generic represents the 
+ * base address for the timer. This driver is for the Renode Virtual Prototype 
+ * only. For the ASIC driver, disable the "vp" feature.
+ */
 pub struct TimerUnit<const BASE_ADDRESS: usize>;
 
 impl<const BASE_ADDRESS: usize> TimerUnit<BASE_ADDRESS>{
@@ -52,6 +57,9 @@ impl<const BASE_ADDRESS: usize> TimerUnit<BASE_ADDRESS>{
         return read_u32(BASE_ADDRESS + Self::TIMER_COUNTER_REG_OFFSET);
     }
 
+    /**
+     * Debug only method used to peek into the timer's control register.
+     */
     #[inline]
     #[cfg(debug_assertions)]
     pub fn get_ctrl_reg() -> u32 {
@@ -59,7 +67,11 @@ impl<const BASE_ADDRESS: usize> TimerUnit<BASE_ADDRESS>{
     }
 }
 
+///Type alias that should be used to interface timer 0.
 pub type Timer0 = TimerUnit::<TIMER0_ADDR>;
+///Type alias that should be used to interface timer 1.
 pub type Timer1 = TimerUnit::<TIMER1_ADDR>;
+///Type alias that should be used to interface timer 2.
 pub type Timer2 = TimerUnit::<TIMER2_ADDR>;
+///Type alias that should be used to interface timer 3.
 pub type Timer3 = TimerUnit::<TIMER3_ADDR>;
