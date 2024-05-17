@@ -12,13 +12,13 @@ use crate::{mmap::*, read_u32, write_u32};
 use bit_field::BitField;
 
 /**
- * Relocatable driver for the PULP Timer Unit IP. The generic represents the 
- * base address for the timer. This driver is for the Renode Virtual Prototype 
+ * Relocatable driver for the PULP Timer Unit IP. The generic represents the
+ * base address for the timer. This driver is for the Renode Virtual Prototype
  * only. For the ASIC driver, disable the "vp" feature.
  */
 pub struct TimerUnit<const BASE_ADDRESS: usize>;
 
-impl<const BASE_ADDRESS: usize> TimerUnit<BASE_ADDRESS>{
+impl<const BASE_ADDRESS: usize> TimerUnit<BASE_ADDRESS> {
     const TIMER_CTRL_REG_OFFSET: usize = 0x0;
     const TIMER_COUNTER_REG_OFFSET: usize = 0x8;
     const TIMER_ENABLE_BIT: usize = 0b0;
@@ -28,11 +28,9 @@ impl<const BASE_ADDRESS: usize> TimerUnit<BASE_ADDRESS>{
      */
     #[inline]
     pub fn enable() {
-        // Read register
         let mut reg = read_u32(BASE_ADDRESS + Self::TIMER_CTRL_REG_OFFSET);
         // Make enable bit 1
         reg.set_bit(Self::TIMER_ENABLE_BIT, true);
-        // Write register back
         write_u32(BASE_ADDRESS + Self::TIMER_CTRL_REG_OFFSET, reg);
     }
 
@@ -41,11 +39,9 @@ impl<const BASE_ADDRESS: usize> TimerUnit<BASE_ADDRESS>{
      */
     #[inline]
     pub fn disable() {
-        // Read register
         let mut reg = read_u32(BASE_ADDRESS + Self::TIMER_CTRL_REG_OFFSET);
         // Write 0 to bit 0 but leave all other bits untouched
         reg.set_bit(Self::TIMER_ENABLE_BIT as usize, false);
-        // Write register back
         write_u32(BASE_ADDRESS + Self::TIMER_CTRL_REG_OFFSET, reg);
     }
 
@@ -68,10 +64,10 @@ impl<const BASE_ADDRESS: usize> TimerUnit<BASE_ADDRESS>{
 }
 
 ///Type alias that should be used to interface timer 0.
-pub type Timer0 = TimerUnit::<TIMER0_ADDR>;
+pub type Timer0 = TimerUnit<TIMER0_ADDR>;
 ///Type alias that should be used to interface timer 1.
-pub type Timer1 = TimerUnit::<TIMER1_ADDR>;
+pub type Timer1 = TimerUnit<TIMER1_ADDR>;
 ///Type alias that should be used to interface timer 2.
-pub type Timer2 = TimerUnit::<TIMER2_ADDR>;
+pub type Timer2 = TimerUnit<TIMER2_ADDR>;
 ///Type alias that should be used to interface timer 3.
-pub type Timer3 = TimerUnit::<TIMER3_ADDR>;
+pub type Timer3 = TimerUnit<TIMER3_ADDR>;
