@@ -188,6 +188,8 @@ jobs:
       UBUNTU_VER: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
+    - name: Create RISC-V GCC directory
+      run: mkdir $RISCV
     - name: Download GCC
       working-directory: /root/riscv-gnu-toolchain/
       run: |
@@ -218,6 +220,8 @@ jobs:
       UBUNTU_VER: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
+    - name: Create RISC-V GCC directory
+      run: mkdir $RISCV
     - name: Download GCC
       working-directory: /root/riscv-gnu-toolchain/
       run: |
