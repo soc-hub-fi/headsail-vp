@@ -28,8 +28,6 @@ pub use hpc::*;
 pub use riscv;
 #[cfg(feature = "rt")]
 pub use riscv_rt as rt;
-#[cfg(feature = "sysctrl")]
-pub use sysctrl::*;
 pub use ufmt;
 
 #[cfg(feature = "alloc")]
