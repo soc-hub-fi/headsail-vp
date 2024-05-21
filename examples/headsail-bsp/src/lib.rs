@@ -101,7 +101,7 @@ core::arch::global_asm!(
 _trap_vector:
     j _start_trap
     .rept 31
-    .word _start_trap // 1..31
+    j _start_trap // 1..31
     .endr
 "
 );
