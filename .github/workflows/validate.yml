@@ -180,13 +180,22 @@ jobs:
 
   build-minimal-c:
     runs-on: ubuntu-latest
+
+    env:
+      RISCV: /opt/riscv/
+      GCC_VER: "2024.04.12"
+      RISCV_XLEN: riscv64
+      UBUNTU_VER: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
-    - name: Install requirements
+    - name: Download GCC
+      working-directory: /root/riscv-gnu-toolchain/
       run: |
-        sudo apt-get update
-        sudo apt-get install gcc-riscv64-unknown-elf
-        cargo install just
+        wget -q https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/$GCC_VER/$RISCV_XLEN-elf-ubuntu-$UBUNTU_VER-llvm-nightly-$GCC_VER-nightly.tar.gz
+        mkdir ${RISCV} && \
+          tar -xf $RISCV_XLEN-elf-ubuntu-$UBUNTU_VER-llvm-nightly-$GCC_VER-nightly.tar.gz --strip-components 1 -C $RISCV
+        export PATH="${RISCV}/bin:${PATH}"
+        $RISCV_XLEN-unknown-elf-gcc --version
     - name: Build minimal C project
       working-directory: ./examples/hpc-c/hello-hpc
       run: just build
@@ -202,13 +211,21 @@ jobs:
     needs: build-minimal-c
 
     runs-on: ubuntu-latest
+    env:
+      RISCV: /opt/riscv/
+      GCC_VER: "2024.04.12"
+      RISCV_XLEN: riscv64
+      UBUNTU_VER: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
-    - name: Install requirements
+    - name: Download GCC
+      working-directory: /root/riscv-gnu-toolchain/
       run: |
-        sudo apt-get update
-        sudo apt-get install gcc-riscv64-unknown-elf
-        cargo install just
+        wget -q https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/$GCC_VER/$RISCV_XLEN-elf-ubuntu-$UBUNTU_VER-llvm-nightly-$GCC_VER-nightly.tar.gz
+        mkdir ${RISCV} && \
+          tar -xf $RISCV_XLEN-elf-ubuntu-$UBUNTU_VER-llvm-nightly-$GCC_VER-nightly.tar.gz --strip-components 1 -C $RISCV
+        export PATH="${RISCV}/bin:${PATH}"
+        $RISCV_XLEN-unknown-elf-gcc --version
     - name: Build minimal C project
       working-directory: ./examples/hpc-c/test-bsp-ffi
       run: just build
