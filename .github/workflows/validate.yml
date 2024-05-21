@@ -200,6 +200,7 @@ jobs:
 
   build-ffi-test:
     needs: build-minimal-c
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
