@@ -15,6 +15,26 @@ env:
   DLA_BIN: dla
 
 jobs:
+  check-bsp:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install requirements
+      run: rustup target add riscv64imac-unknown-none-elf riscv32imc-unknown-none-elf
+    - name: Check BSP (-Fsysctrl-rt)
+      working-directory: ./examples/headsail-bsp
+      run: cargo check -Fsysctrl-rt
+    - name: Check BSP (-Fhpc-rt)
+      working-directory: ./examples/headsail-bsp
+      run: cargo check -Fhpc-rt
+    - name: Check BSP examples (-Fsysctrl-rt)
+      working-directory: ./examples/headsail-bsp
+      run: cargo check --examples -Fsysctrl-rt
+    - name: Check BSP examples (-Fhpc-rt)
+      working-directory: ./examples/headsail-bsp
+      run: cargo check --examples -Fhpc-rt
+
   build-dla-example:
     runs-on: ubuntu-latest
 
