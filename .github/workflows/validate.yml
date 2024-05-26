@@ -18,6 +18,9 @@ jobs:
   check-bsp:
     runs-on: ubuntu-latest
 
+    env:
+      RUSTFLAGS: -D warnings
+
     steps:
     - uses: actions/checkout@v4
     - name: Install requirements
