@@ -25,18 +25,32 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install requirements
       run: rustup target add riscv64imac-unknown-none-elf riscv32imc-unknown-none-elf
+
     - name: Check BSP (-Fsysctrl-rt)
       working-directory: ./examples/headsail-bsp
       run: cargo check -Fsysctrl-rt
-    - name: Check BSP (-Fhpc-rt)
+    - name: Check BSP (-Fsysctrl-rt -Fvp)
       working-directory: ./examples/headsail-bsp
-      run: cargo check -Fhpc-rt
+      run: cargo check -Fsysctrl-rt -Fvp
     - name: Check BSP examples (-Fsysctrl-rt)
       working-directory: ./examples/headsail-bsp
       run: cargo check --examples -Fsysctrl-rt
+    - name: Check BSP examples (-Fsysctrl-rt -Fvp)
+      working-directory: ./examples/headsail-bsp
+      run: cargo check --examples -Fsysctrl-rt -Fvp
+
+    - name: Check BSP (-Fhpc-rt)
+      working-directory: ./examples/headsail-bsp
+      run: cargo check -Fhpc-rt
+    - name: Check BSP (-Fhpc-rt -Fvp)
+      working-directory: ./examples/headsail-bsp
+      run: cargo check -Fhpc-rt -Fvp
     - name: Check BSP examples (-Fhpc-rt)
       working-directory: ./examples/headsail-bsp
       run: cargo check --examples -Fhpc-rt
+    - name: Check BSP examples (-Fhpc-rt -Fvp)
+      working-directory: ./examples/headsail-bsp
+      run: cargo check --examples -Fhpc-rt -Fvp
 
   build-dla-example:
     runs-on: ubuntu-latest
