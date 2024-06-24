@@ -15,6 +15,12 @@ env:
   DLA_BIN: dla
   DLA_VALIDATION_BIN: validate
 
+  # Used for setting up RISC-V GCC toolchain for C tests
+  RISCV: /tmp/riscv/
+  RISCV_XLEN: riscv64
+  GCC_VER: "2024.04.12"
+  UBUNTU_VER: ubuntu-22.04
+
 jobs:
   check-bsp:
     runs-on: ubuntu-latest
@@ -181,17 +187,12 @@ jobs:
   build-minimal-c:
     runs-on: ubuntu-latest
 
-    env:
-      RISCV: /opt/riscv/
-      GCC_VER: "2024.04.12"
-      RISCV_XLEN: riscv64
-      UBUNTU_VER: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
     - name: Create RISC-V GCC directory
       run: mkdir $RISCV
     - name: Download GCC
-      working-directory: /root/riscv-gnu-toolchain/
+      working-directory: /tmp/riscv-gnu-toolchain/
       run: |
         wget -q https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/$GCC_VER/$RISCV_XLEN-elf-ubuntu-$UBUNTU_VER-llvm-nightly-$GCC_VER-nightly.tar.gz
         mkdir ${RISCV} && \
@@ -213,17 +214,12 @@ jobs:
     needs: build-minimal-c
 
     runs-on: ubuntu-latest
-    env:
-      RISCV: /opt/riscv/
-      GCC_VER: "2024.04.12"
-      RISCV_XLEN: riscv64
-      UBUNTU_VER: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
     - name: Create RISC-V GCC directory
       run: mkdir $RISCV
     - name: Download GCC
-      working-directory: /root/riscv-gnu-toolchain/
+      working-directory: /tmp/riscv-gnu-toolchain/
       run: |
         wget -q https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/$GCC_VER/$RISCV_XLEN-elf-ubuntu-$UBUNTU_VER-llvm-nightly-$GCC_VER-nightly.tar.gz
         mkdir ${RISCV} && \
