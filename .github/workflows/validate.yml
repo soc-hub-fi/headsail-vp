@@ -198,7 +198,9 @@ jobs:
         mkdir ${RISCV} && \
           tar -xf $RISCV_XLEN-elf-ubuntu-$UBUNTU_VER-llvm-nightly-$GCC_VER-nightly.tar.gz --strip-components 1 -C $RISCV
         export PATH="${RISCV}/bin:${PATH}"
+        echo "${RISCV}/bin" >> $GITHUB_PATH
         $RISCV_XLEN-unknown-elf-gcc --version
+        $RISCV_XLEN-unknown-elf-ld --version
     - name: Build minimal C project
       working-directory: ./examples/hpc-c/hello-hpc
       run: just build
@@ -225,7 +227,9 @@ jobs:
         mkdir ${RISCV} && \
           tar -xf $RISCV_XLEN-elf-ubuntu-$UBUNTU_VER-llvm-nightly-$GCC_VER-nightly.tar.gz --strip-components 1 -C $RISCV
         export PATH="${RISCV}/bin:${PATH}"
+        echo "${RISCV}/bin" >> $GITHUB_PATH
         $RISCV_XLEN-unknown-elf-gcc --version
+        $RISCV_XLEN-unknown-elf-ld --version
     - name: Build minimal C project
       working-directory: ./examples/hpc-c/test-bsp-ffi
       run: just build
