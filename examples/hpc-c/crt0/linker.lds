@@ -12,17 +12,7 @@ ENTRY(_enter)
 
 MEMORY
 {
-    ram (airwx) : ORIGIN = 0x10000, LENGTH = 0x8000
-}
-
-PHDRS
-{
-    ram PT_LOAD;
-    ram_init PT_LOAD;
-    tls PT_TLS;
-    ram PT_LOAD;
-    text PT_LOAD;
-    lim_init PT_LOAD;
+    ram (airwx) : ORIGIN = 0x10000, LENGTH = 0x40000
 }
 
 SECTIONS
@@ -38,7 +28,7 @@ SECTIONS
      * initializes the stack pointers for each hart at the right offset fram
      * the _sp symbol.
      */
-    __stack_size = DEFINED(__stack_size) ? __stack_size : 0x400;
+    __stack_size = DEFINED(__stack_size) ? __stack_size : 0x1000;
     PROVIDE(__stack_size = __stack_size);
 
     /* The size of the heap can be overriden at build-time by adding the
@@ -56,7 +46,7 @@ SECTIONS
      * Note that depending on the memory layout, the bitness (32/64bit) of the
      * target, and the code model in use, this might cause a relocation error.
      */
-    __heap_size = DEFINED(__heap_size) ? __heap_size : 0x800;
+    __heap_size = DEFINED(__heap_size) ? __heap_size : 0x2000;
 
     /* RAM SECTION
      *
@@ -71,17 +61,17 @@ SECTIONS
         KEEP (*(.text.init.enter))
         KEEP (*(.text.init.*))
         KEEP (*(SORT_NONE(.init)))
-    } >ram :ram
+    } >ram
 
     .fini : {
         KEEP (*(SORT_NONE(.fini)))
-    } >ram :ram
+    } >ram
 
     .preinit_array : ALIGN(8) {
         PROVIDE_HIDDEN (__preinit_array_start = .);
         KEEP (*(.preinit_array))
         PROVIDE_HIDDEN (__preinit_array_end = .);
-    } >ram :ram
+    } >ram
 
     .init_array : ALIGN(8) {
         PROVIDE_HIDDEN (__init_array_start = .);
@@ -92,7 +82,7 @@ SECTIONS
         KEEP (*(SORT_BY_INIT_PRIORITY(.metal.init_array.*)));
         KEEP (*(.metal.init_array));
         PROVIDE_HIDDEN ( metal_constructors_end = .);
-    } >ram :ram
+    } >ram
 
     .fini_array : ALIGN(8) {
         PROVIDE_HIDDEN (__fini_array_start = .);
@@ -102,9 +92,7 @@ SECTIONS
         KEEP (*(SORT_BY_INIT_PRIORITY(.metal.fini_array.*)));
         KEEP (*(.metal.fini_array));
         PROVIDE_HIDDEN ( metal_destructors_end = .);
-    } >ram :ram
-
-
+    } >ram
 
     .ctors : {
         KEEP (*crtbegin.o(.ctors))
@@ -113,7 +101,7 @@ SECTIONS
         KEEP (*(SORT(.ctors.*)))
         KEEP (*(.ctors))
         KEEP (*(.metal.ctors .metal.ctors.*))
-    } >ram :ram
+    } >ram
 
     .dtors : {
         KEEP (*crtbegin.o(.dtors))
@@ -122,7 +110,7 @@ SECTIONS
         KEEP (*(SORT(.dtors.*)))
         KEEP (*(.dtors))
         KEEP (*(.metal.dtors .metal.dtors.*))
-    } >ram : ram
+    } >ram
 
     .rodata : {
         *(.rdata)
@@ -134,7 +122,7 @@ SECTIONS
         *(.srodata.cst4)
         *(.srodata.cst2)
         *(.srodata .srodata.*)
-    } >ram :ram
+    } >ram
 
     /* LIM SECTION
      *
@@ -148,7 +136,7 @@ SECTIONS
 
     .lim : ALIGN(8) {
         *(.lim .lim.*)
-    } >ram AT>ram :lim_init
+    } >ram
 
     PROVIDE( metal_segment_lim_source_start = LOADADDR(.lim) );
     PROVIDE( metal_segment_lim_target_start = ADDR(.lim) );
@@ -164,7 +152,7 @@ SECTIONS
         *(.text.startup .text.startup.*)
         *(.text .text.*)
         *(.gnu.linkonce.t.*)
-    } >ram :text
+    } >ram
 
     /* RAM SECTION
      *
@@ -186,12 +174,12 @@ SECTIONS
         PROVIDE( __global_pointer$ = . + 0x800 );
         *(.sdata .sdata.* .sdata2.*)
         *(.gnu.linkonce.s.*)
-    } >ram AT>ram :ram_init
+    } >ram
 
     .tdata : ALIGN(8) {
         PROVIDE( __tls_base = . );
 	*(.tdata .tdata.* .gnu.linkonce.td.*)
-    } >ram AT>ram :tls :ram_init
+    } >ram
 
     PROVIDE( __tdata_source = LOADADDR(.tdata) );
     PROVIDE( __tdata_size = SIZEOF(.tdata) );
@@ -204,13 +192,13 @@ SECTIONS
 	*(.tbss .tbss.* .gnu.linkonce.tb.*)
 	*(.tcommon .tcommon.*)
 	PROVIDE( __tls_end = . );
-    } >ram AT>ram :tls :ram
+    } >ram
     PROVIDE( __tbss_size = SIZEOF(.tbss) );
     PROVIDE( __tls_size = __tls_end - __tls_base );
 
     .tbss_space : ALIGN(8) {
 	. = . + __tbss_size;
-    } >ram :ram
+    } >ram
 
     .bss (NOLOAD): ALIGN(8) {
         *(.sbss*)
@@ -218,32 +206,32 @@ SECTIONS
         *(.bss .bss.*)
         *(.gnu.linkonce.b.*)
         *(COMMON)
-    } >ram :ram
+    } >ram
 
     PROVIDE( metal_segment_bss_source_start = LOADADDR(.tbss) );
     PROVIDE( metal_segment_bss_target_start = ADDR(.tbss) );
     PROVIDE( metal_segment_bss_target_end = ADDR(.bss) + SIZEOF(.bss) );
-
-
 
     .stack (NOLOAD) : ALIGN(16) {
         PROVIDE(metal_segment_stack_begin = .);
         . += __stack_size; /* Hart 0 */
         PROVIDE( _sp = . );
         PROVIDE(metal_segment_stack_end = .);
-    } >ram :ram
+    } >ram
 
     .heap (NOLOAD) : ALIGN(8) {
         PROVIDE( __end = . );
+        PROVIDE( _heap = . );
         PROVIDE( __heap_start = . );
         PROVIDE( metal_segment_heap_target_start = . );
         /* If __heap_max is defined, grow the heap to use the rest of RAM,
          * otherwise set the heap size to __heap_size */
         . = DEFINED(__heap_max) ? MIN( LENGTH(ram) - ( . - ORIGIN(ram)) , 0x10000000) : __heap_size;
         PROVIDE( metal_segment_heap_target_end = . );
+        PROVIDE( _eheap = . );
         PROVIDE( _heap_end = . );
         PROVIDE( __heap_end = . );
-    } >ram :ram
+    } >ram
 
     /* C++ exception handling information is
      * not useful with our current runtime environment,

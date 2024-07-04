@@ -5,10 +5,10 @@
 
 int main()
 {
-    printf("Hello, world! (from newlib)\n");   
-    char name[50];
+    printf("Hello, world! (from newlib)\n\r");   
+    int num;
     // gets(name);
-    scanf("%s", name);
+    scanf("%i", &num);
     // printf("Hello %s!\n", name);
 
     return 0;

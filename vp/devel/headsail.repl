@@ -119,7 +119,7 @@ hpc_bootram: Memory.MappedMemory @ {
     sysbus new Bus.BusPointRegistration {address: 0x1FFF10000; cpu: cpu_hpc2};
     sysbus new Bus.BusPointRegistration {address: 0x1FFF10000; cpu: cpu_hpc3}
     }
-    size: 0x8000
+    size: 0x40000
 
 ram_0: Memory.MappedMemory @ {
     sysbus new Bus.BusPointRegistration {address: 0x90080000; cpu: cpu_sysctrl};
@@ -219,7 +219,7 @@ sdram_truncated: Memory.MappedMemory @  {
     }
     size: 0x50000000
 
-dla: Python.PythonPeripheral @ {
+/*dla: Python.PythonPeripheral @ {
     sysbus new Bus.BusMultiRegistration {address: 0xFF700000; size: 0x0068; region: "cfg"; cpu: cpu_sysctrl};
     sysbus new Bus.BusMultiRegistration {address: 0x1FF700000; size: 0x0068; region: "cfg"; cpu: cpu_hpc0};
     sysbus new Bus.BusMultiRegistration {address: 0x1FF700000; size: 0x0068; region: "cfg"; cpu: cpu_hpc1};
@@ -233,7 +233,7 @@ dla: Python.PythonPeripheral @ {
     }
     size: 0x80068
     initable: true
-    filename: "scripts/pydev/DLA.py"
+    filename: "scripts/pydev/DLA.py"*/
 
 apb_spi_master_0: SPI.STM32SPI @ {
     sysbus new Bus.BusPointRegistration {address: 0xFFF02000; cpu: cpu_sysctrl};
