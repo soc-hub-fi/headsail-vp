@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR riscv64)
 
-project(hello-hpc C)
+project(hello-newlib-hpc C)
 
 # Add C-runtime 0
 set(CRT0 ${CMAKE_CURRENT_SOURCE_DIR}/../crt0)
@@ -29,7 +29,7 @@ target_link_options(${CMAKE_PROJECT_NAME} PUBLIC LINKER:-Map=output.map)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${LIB_PATH}/libc.a)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${LIB_PATH}/libc.a)
 # target_link_libraries(${CMAKE_PROJECT_NAME} ${LIB_PATH}/libg.a)
-# target_link_libraries(${CMAKE_PROJECT_NAME} ${LIB_PATH}/libm.a)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${LIB_PATH}/libm.a)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ${LIB_PATH}/libgloss.a)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE -lc -lgcc -lgloss)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE -lc -lm -lgcc -lgloss)
 
