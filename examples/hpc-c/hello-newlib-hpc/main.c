@@ -2,28 +2,52 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 
 int main()
 {
     printf("Hello, world! (from newlib)\n");   
-    int num[3];
-    scanf("%d %d %d", &num[0], &num[1], &num[2]);
-    printf("The numbers you entered are: %f %f %d\n\r", 
-        cos((double)num[0]), 
-        cos((double)num[1]), 
-        num[2]
-    );
-    printf("The numbers you entered are: %f %f %d\n\r", 
-        sin((double)num[0]), 
-        sin((double)num[1]), 
-        num[2]
-    );
-    printf("The numbers you entered are: %f %f %d\n\r", 
-        tan((double)num[0]), 
-        tan((double)num[1]), 
-        num[2]
-    );
+    
+    double num[10];
+    double res[10];
+
+    for(int i = 0; i < 10; i++)
+    {
+        num[i] = (double)((double)rand() / (double)RAND_MAX);
+    }
+
+    for(int i = 0; i < 1; i++)
+    {
+        for(int j = 0; j < 1; j++)
+        {
+            res[0] = sin(num[j]);
+            res[1] = cos(num[j]);
+            res[2] = tan(num[j]);
+            res[3] = exp(num[j]);
+            res[4] = exp2(num[j]);
+            res[5] = log(num[j]);
+            res[6] = log2(num[j]);
+            res[7] = log10(num[j]);
+            res[8] = sqrt(num[j]);
+            res[9] = pow(M_PI, num[j]);
+        }
+    }
+    for(int i = 0; i < 10; i++) printf("%f ", num[i]);
+
+    int alloc_size = 16384;
+    void* buf = malloc(alloc_size);
+    int element_size = sizeof(double);
+
+    for(int i = 0; i < alloc_size / element_size; i++) 
+    {
+        ((double*)buf)[i] = res[i % 10];
+    }
+
+    for(int i = 0; i < alloc_size / element_size; i++) 
+    {
+        printf("%f ", ((double*)buf)[i]);
+    }
 
     return 0;
 }

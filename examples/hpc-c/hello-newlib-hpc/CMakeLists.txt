@@ -7,7 +7,7 @@ set(CMAKE_SYSTEM_PROCESSOR riscv64)
 project(hello-newlib-hpc C)
 
 # Add C-runtime 0
-set(CRT0 ${CMAKE_CURRENT_SOURCE_DIR}/../crt0)
+set(CRT0 ${CMAKE_CURRENT_SOURCE_DIR})
 set(INC_PATH "/opt/headsail-newlib/cygwin-newlib/riscv64-unknown-elf/include")
 set(LIB_PATH "/opt/headsail-newlib/cygwin-newlib/riscv64-unknown-elf/lib")
 
@@ -20,7 +20,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=rv64imac -mabi=lp64")
 # Do not use the standard libraries provided by the compiler
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -nostdlib")
-# Use this particular linker scripts
+# Use this particular linker script
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -T${CRT0}/linker.lds")
 # Use the medany RISCV code model and the specified linker
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcmodel=medany -Fuse-ld=riscv64-unknown-elf-ld")
