@@ -39,9 +39,9 @@ SECTIONS
     } >ram
 
     .preinit_array : ALIGN(8) {
-        PROVIDE_HIDDEN (__preinit_array_start = .);
+        PROVIDE_HIDDEN (_preinit_array_start = .);
         KEEP (*(.preinit_array))
-        PROVIDE_HIDDEN (__preinit_array_end = .);
+        PROVIDE_HIDDEN (_preinit_array_end = .);
     } >ram
 
     .init_array : ALIGN(8) {
@@ -109,10 +109,6 @@ SECTIONS
         *(.lim .lim.*)
     } >ram
 
-    PROVIDE( metal_segment_lim_source_start = LOADADDR(.lim) );
-    PROVIDE( metal_segment_lim_target_start = ADDR(.lim) );
-    PROVIDE( metal_segment_lim_target_end = ADDR(.lim) + SIZEOF(.lim) );
-
     /* TEXT SECTION
      *
      * The following section contains the code of the program
@@ -142,33 +138,26 @@ SECTIONS
         *(.data .data.*)
         *(.gnu.linkonce.d.*)
         . = ALIGN(8);
-        PROVIDE( __global_pointer$ = . + 0x800 );
+        PROVIDE( _global_pointer$ = . + 0x800 );
         *(.sdata .sdata.* .sdata2.*)
         *(.gnu.linkonce.s.*)
     } >ram
 
     .tdata : ALIGN(8) {
-        PROVIDE( __tls_base = . );
+        PROVIDE( _tls_base = . );
 	*(.tdata .tdata.* .gnu.linkonce.td.*)
     } >ram
-
-    PROVIDE( __tdata_source = LOADADDR(.tdata) );
-    PROVIDE( __tdata_size = SIZEOF(.tdata) );
-
-    PROVIDE( metal_segment_data_source_start = LOADADDR(.data) );
-    PROVIDE( metal_segment_data_target_start = ADDR(.data) );
-    PROVIDE( metal_segment_data_target_end = ADDR(.tdata) + SIZEOF(.tdata) );
 
     .tbss : ALIGN(8) {
 	*(.tbss .tbss.* .gnu.linkonce.tb.*)
 	*(.tcommon .tcommon.*)
-	PROVIDE( __tls_end = . );
+	PROVIDE( _tls_end = . );
     } >ram
-    PROVIDE( __tbss_size = SIZEOF(.tbss) );
-    PROVIDE( __tls_size = __tls_end - __tls_base );
+    PROVIDE( _tbss_size = SIZEOF(.tbss) );
+    /* PROVIDE( __tls_size = __tls_end - __tls_base ); */
 
     .tbss_space : ALIGN(8) {
-	. = . + __tbss_size;
+	. = . + _tbss_size;
     } >ram
 
     .bss (NOLOAD): ALIGN(8) {
@@ -179,9 +168,9 @@ SECTIONS
         *(COMMON)
     } >ram
 
-    PROVIDE( metal_segment_bss_source_start = LOADADDR(.tbss) );
-    PROVIDE( metal_segment_bss_target_start = ADDR(.tbss) );
-    PROVIDE( metal_segment_bss_target_end = ADDR(.bss) + SIZEOF(.bss) );
+    PROVIDE( _bss_source_start = LOADADDR(.tbss) );
+    PROVIDE( _bss_target_start = ADDR(.tbss) );
+    PROVIDE( _bss_target_end = ADDR(.bss) + SIZEOF(.bss) );
 
     /**
      * HEAP AND STACK MANAGEMENT
