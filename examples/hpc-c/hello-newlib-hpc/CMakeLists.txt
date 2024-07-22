@@ -21,7 +21,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=rv64imac -mabi=lp64")
 # Do not use the standard libraries provided by the compiler
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -nostdlib")
 # Use this particular linker script
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -T${CRT0}/linker.lds")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -T${CRT0}/../crt0/linker_sdram.lds")
 # Use the medany RISCV code model and the specified linker
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcmodel=medany -Fuse-ld=riscv64-unknown-elf-ld")
 
