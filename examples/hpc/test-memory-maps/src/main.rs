@@ -8,7 +8,7 @@ use bsp::{
     rt::entry,
     sprint, sprintln,
     tb::{report_fail, report_pass},
-    uart::{putc, uart_write},
+    uart::putc,
     ufmt::{self, uDebug},
 };
 use panic_halt as _;
