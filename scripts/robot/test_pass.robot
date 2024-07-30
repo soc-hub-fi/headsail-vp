@@ -23,4 +23,7 @@ Binary prints "[PASS]" on UART0
     Execute Command             sysbus LoadELF $bin false true ${CPU}
     Start Emulation
 
+    ${output} =                 Execute Command  lastlog
+    Should Not Contain          ${output}  from non existing peripheral
+
     Wait For Line On Uart       [PASS]
