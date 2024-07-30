@@ -9,17 +9,6 @@ Just a bare metal C program that makes ude of the Newlib C runtime library.
 3. Then `just run`. Use `just clean-build` to reconfigure from scratch (useful for testing & debugging the build process).
 See Justfile for what goes on behind the scenes.
 
-## Compile & run
-
-1. Set CC to point to RISC-V compiler
-    * `source ../scripts/export_riscv.env`
-2. Configure & build the project
-    * `mkdir -p build && cd build`
-    * `cmake ..`
-    * `make`
-3. Run the code on the virtual platform
-    * `../../../../scripts/run_on_hpc.sh hello-hpc`
-
 ## Build Configuration Information
 
 This program is based on the Headsail Newlib port, which is in itself based on Newlib 4.4.0. The crt0.S is pulled 
