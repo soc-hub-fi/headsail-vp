@@ -16,7 +16,7 @@ env:
   DLA_VALIDATION_BIN: validate
 
   # Used for setting up RISC-V GCC toolchain for C tests
-  RISCV: /tmp/riscv/
+  RISCV: /opt/riscv/
   RISCV_XLEN: riscv64
   GCC_VER: "2024.04.12"
   UBUNTU_VER: ubuntu-22.04
@@ -111,11 +111,6 @@ jobs:
   build-dla-validation:
     runs-on: ubuntu-latest
 
-    env:
-      RISCV: /opt/riscv/
-      GCC_VER: "2024.04.12"
-      RISCV_XLEN: riscv64
-      UBUNTU_VER: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
     - name: Create RISC-V GCC build directory
