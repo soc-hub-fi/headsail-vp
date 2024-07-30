@@ -2,7 +2,7 @@ name: Test memory maps
 
 on:
   schedule:
-    - cron: "14 3 * * 5" # every friday at 03:14
+    - cron: "14 3 28 * *" # on the 28th day of every month at 03:14
   workflow_dispatch: # Allow manual dispatch
   push:
       branches:
