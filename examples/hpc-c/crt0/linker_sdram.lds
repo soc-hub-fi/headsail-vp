@@ -12,7 +12,7 @@ ENTRY(_enter)
 
 MEMORY
 {
-    ram (airwx) : ORIGIN = 0x100000000, LENGTH = 0x7000000
+    ram (airwx) : ORIGIN = 0x100000000, LENGTH = 0x70000000
 }
 
 SECTIONS
