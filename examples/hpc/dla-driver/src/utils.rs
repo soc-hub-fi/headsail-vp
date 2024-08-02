@@ -76,7 +76,6 @@ pub fn get_banks_for_layer(
     input_size: usize,
     kernels_size: usize,
     output_size: usize,
-    bias_size: Option<usize>,
 ) -> (MemoryBank, MemoryBank, MemoryBank, Option<u32>) {
     let num_input_banks = calculate_number_of_banks_needed(input_size);
     let num_kernel_banks = calculate_number_of_banks_needed(kernels_size);
@@ -86,8 +85,8 @@ pub fn get_banks_for_layer(
     let kernel_bank = input_bank + num_input_banks;
     let output_bank = kernel_bank + num_kernel_banks;
 
-    let bias_bank = bias_size
-        .map(|_| (MEMORY_BANK_BASE_ADDR + (output_bank + num_output_banks).offset()) as u32);
+    let bias_bank =
+        Some((MEMORY_BANK_BASE_ADDR + (output_bank + num_output_banks).offset()) as u32);
     (input_bank, kernel_bank, output_bank, bias_bank)
 }
 

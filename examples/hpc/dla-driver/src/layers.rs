@@ -200,13 +200,10 @@ fn run_layers<T: DlaOutput + Clone>(
 
     let dla = Dla::new();
 
-    let bias_size = bias.as_ref().map(|bias| bias.len());
-
     let banks = get_banks_for_layer(
         input.get_size(),
         kernels.get_size(),
         output_size.0 * output_size.1,
-        bias_size,
     );
 
     // Initalize layer
