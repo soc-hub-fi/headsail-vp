@@ -2,14 +2,10 @@
 
 use crate::tensor3::{Order3, Tensor3};
 use crate::tensor4::{Order4, Tensor4};
-use crate::{
-    Dla, InputSize, KernelSize, LayerConfig, Padding, SimdBitMode, Stride,
-};
+use crate::{Dla, InputSize, KernelSize, LayerConfig, Padding, SimdBitMode, Stride};
 use alloc::vec::Vec;
 
-use crate::utils::{
-    calculate_conv2d_out_param_dim, get_banks_for_layer,
-};
+use crate::utils::{calculate_conv2d_out_param_dim, get_banks_for_layer};
 
 // Define a trait for output handling
 trait DlaOutput: Sized {
