@@ -1,5 +1,3 @@
-#![no_std]
-
 use crate::tensor3::{Order3, Tensor3};
 use crate::tensor4::{Order4, Tensor4};
 use crate::{Dla, InputSize, KernelSize, LayerConfig, Padding, SimdBitMode, Stride};

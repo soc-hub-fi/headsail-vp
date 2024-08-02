@@ -1,5 +1,3 @@
-#![no_std]
-
 use crate::mmap::MEMORY_BANK_SIZE;
 use crate::tensor3::{Order3, Tensor3};
 use crate::tensor4::Tensor4;
