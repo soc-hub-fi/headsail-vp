@@ -1,7 +1,6 @@
 #![no_std]
 #![no_main]
 
-#[macro_use]
 extern crate alloc;
 
 use dla_driver::utils::generate_output_tensor;
