@@ -15,6 +15,12 @@ env:
   DLA_BIN: dla
   DLA_VALIDATION_BIN: validate
 
+  # Used for setting up RISC-V GCC toolchain for C tests
+  RISCV: /opt/riscv/
+  RISCV_XLEN: riscv64
+  GCC_VER: "2024.04.12"
+  UBUNTU_VER: ubuntu-22.04
+
 jobs:
   check-bsp:
     runs-on: ubuntu-latest
@@ -105,14 +111,9 @@ jobs:
   build-dla-validation:
     runs-on: ubuntu-latest
 
-    env:
-      RISCV: /opt/riscv/
-      GCC_VER: "2024.04.12"
-      RISCV_XLEN: riscv64
-      UBUNTU_VER: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
-    - name: Create RISC-V GCC build directory
+    - name: Create RISC-V GCC directory
       shell: bash
       run: mkdir /tmp/riscv-gnu-toolchain
     - name: Download GCC
@@ -177,3 +178,118 @@ jobs:
     - name: Build FFI without RT on HPC
       working-directory: ./examples/headsail-bsp-ffi
       run: cargo build --target=riscv64imac-unknown-none-elf -Fpanic-uart
+
+  build-minimal-c:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Create RISC-V GCC directory
+      shell: bash
+      run: mkdir /tmp/riscv-gnu-toolchain
+    - name: Download GCC
+      working-directory: /tmp/riscv-gnu-toolchain/
+      run: |
+        wget -q https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/$GCC_VER/$RISCV_XLEN-elf-$UBUNTU_VER-gcc-nightly-$GCC_VER-nightly.tar.gz
+        mkdir ${RISCV} && \
+          tar -xf $RISCV_XLEN-elf-$UBUNTU_VER-gcc-nightly-$GCC_VER-nightly.tar.gz --strip-components 1 -C $RISCV
+        export PATH="${RISCV}"/bin:${PATH}
+        echo "${RISCV}/bin" >> $GITHUB_PATH
+        $RISCV_XLEN-unknown-elf-gcc --version
+        $RISCV_XLEN-unknown-elf-ld --version
+    - name: Build minimal C project
+      working-directory: ./examples/hpc-c/hello-hpc
+      shell: bash
+      run: |
+        source ../scripts/export_riscv.env
+        mkdir -p build && cd build
+        cmake .. && make
+    - name: Upload binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: hello-hpc-c.elf
+        path: ./examples/hpc-c/hello-hpc/build/hello-hpc
+        if-no-files-found: error
+        retention-days: 14
+
+  build-ffi-test:
+    needs: build-minimal-c
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Create RISC-V GCC directory
+      shell: bash
+      run: mkdir /tmp/riscv-gnu-toolchain
+    - name: Download GCC
+      working-directory: /tmp/riscv-gnu-toolchain/
+      run: |
+        wget -q https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/$GCC_VER/$RISCV_XLEN-elf-$UBUNTU_VER-gcc-nightly-$GCC_VER-nightly.tar.gz
+        mkdir ${RISCV} && \
+          tar -xf $RISCV_XLEN-elf-$UBUNTU_VER-gcc-nightly-$GCC_VER-nightly.tar.gz --strip-components 1 -C $RISCV
+        export PATH="${RISCV}"/bin:${PATH}
+        echo "${RISCV}/bin" >> $GITHUB_PATH
+        $RISCV_XLEN-unknown-elf-gcc --version
+        $RISCV_XLEN-unknown-elf-ld --version
+    - name: Build FFI test project
+      working-directory: ./examples/hpc-c/test-bsp-ffi
+      shell: bash
+      run: |
+        source ../scripts/export_riscv.env
+        mkdir -p build && cd build
+        cmake .. && make
+    - name: Upload binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bsp-ffi.elf
+        path: ./examples/hpc-c/test-bsp-ffi/build/test-bsp-ffi
+        if-no-files-found: error
+        retention-days: 14
+
+  run-minimal-c:
+    needs: build-minimal-c
+
+    runs-on: ubuntu-latest
+    container:
+      image: antmicro/renode:1.14.0
+      options: --user root
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download binary
+      uses: actions/download-artifact@v4
+      with:
+        name: hello-hpc-c.elf
+    - name: Create Renode peripheral symlinks
+      run: ln -s $(readlink -f "./vp/devel/python_peripherals/DLA.py") "$RENODE_DIR/scripts/pydev/DLA.py"
+    - name: Run example
+      run: renode-test scripts/robot/is_hello.robot --variable BIN:"$(readlink -f hello-hpc-c.elf)"
+    - name: Upload snapshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        path: snapshots/
+
+  run-ffi-test:
+    needs: build-ffi-test
+
+    runs-on: ubuntu-latest
+    container:
+      image: antmicro/renode:1.14.0
+      options: --user root
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download binary
+      uses: actions/download-artifact@v4
+      with:
+        name: test-bsp-ffi.elf
+    - name: Create Renode peripheral symlinks
+      run: ln -s $(readlink -f "./vp/devel/python_peripherals/DLA.py") "$RENODE_DIR/scripts/pydev/DLA.py"
+    - name: Run example
+      run: renode-test scripts/robot/is_hello.robot --variable BIN:"$(readlink -f test-bsp-ffi.elf)"
+    - name: Upload snapshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        path: snapshots/
