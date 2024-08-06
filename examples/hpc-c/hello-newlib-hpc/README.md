@@ -1,6 +1,6 @@
 # Minimal C program
 
-Just a bare metal C program that makes ude of the Newlib C runtime library.
+Just a bare metal C program that makes use of the Newlib C runtime library.
 
 ## Quickstart
 
