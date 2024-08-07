@@ -1,0 +1,92 @@
+name: Test memory maps
+
+on:
+  schedule:
+    - cron: "14 3 28 * *" # on the 28th day of every month at 03:14
+  workflow_dispatch: # Allow manual dispatch
+  push:
+      branches:
+        - feat/mmap-test
+
+env:
+  CI: 1
+  CARGO_TERM_COLOR: always
+  RENODE_DIR: /opt/renode/
+  # Used by renode-test to generate snapshots of failed tests
+  RENODE_CI_MODE: YES
+  BIN: test-memory-maps
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        device: [
+          C2C_config, C2C_serial, DLA, DMA0, DMA1, DSP, EthSSPadConf, HPC, SYSCTRL,
+          apb_gpio, apb_i2c, apb_pad_conf_reg_array, apb_spim0, apb_spim1, apb_sw_irq, apb_uart0, apb_uart1,
+          mdio_map0, mdio_map1, sdram_cfg]
+    env:
+      RISCV: /opt/riscv/
+      GCC_VER: "2024.04.12"
+      RISCV_XLEN: riscv64
+      UBUNTU_VER: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Create RISC-V GCC build directory
+      shell: bash
+      run: mkdir /tmp/riscv-gnu-toolchain
+    - name: Download GCC
+      working-directory: /tmp/riscv-gnu-toolchain/
+      run: |
+        wget -q https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/$GCC_VER/$RISCV_XLEN-elf-$UBUNTU_VER-gcc-nightly-$GCC_VER-nightly.tar.gz
+        mkdir ${RISCV} && \
+          tar -xf $RISCV_XLEN-elf-$UBUNTU_VER-gcc-nightly-$GCC_VER-nightly.tar.gz --strip-components 1 -C $RISCV
+        export PATH="${RISCV}"/bin:${PATH}
+        echo "${RISCV}/bin" >> $GITHUB_PATH
+        $RISCV_XLEN-unknown-elf-gcc --version
+        $RISCV_XLEN-unknown-elf-ld --version
+    - name: Install requirements
+      run: rustup target add riscv64imac-unknown-none-elf
+    - name: Build test
+      working-directory: ./examples/hpc/test-memory-maps
+      run: |
+        DEVICE=${{ matrix.device }} cargo build --release
+        mv ../target/riscv64imac-unknown-none-elf/release/$BIN ${{ matrix.device }}.elf
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.device }}.elf
+        path: ./examples/hpc/test-memory-maps/${{ matrix.device }}.elf
+        if-no-files-found: error
+        retention-days: 14
+
+  run-test:
+    needs: build-test
+
+    runs-on: ubuntu-latest
+    container:
+      image: antmicro/renode:1.14.0
+      options: --user root
+
+    strategy:
+      matrix:
+        device: [
+          C2C_config, C2C_serial, DLA, DMA0, DMA1, DSP, EthSSPadConf, HPC, SYSCTRL,
+          apb_gpio, apb_i2c, apb_pad_conf_reg_array, apb_spim0, apb_spim1, apb_sw_irq, apb_uart0, apb_uart1,
+          mdio_map0, mdio_map1, sdram_cfg]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ matrix.device }}.elf
+    - name: Create Renode peripheral symlinks
+      run: ln -s $(readlink -f "./vp/devel/python_peripherals/DLA.py") "$RENODE_DIR/scripts/pydev/DLA.py"
+    - name: Run test
+      run: renode-test ./scripts/robot/test_pass.robot --variable BIN:"$(readlink -f ${{ matrix.device }}.elf)"
+    - name: Upload snapshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        path: snapshots/
