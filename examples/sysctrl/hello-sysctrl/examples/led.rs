@@ -6,7 +6,10 @@
 #![no_std]
 #![no_main]
 
-use headsail_bsp::{gpio, rt::entry, soc_ctrl};
+use headsail_bsp::{
+    rt::entry,
+    sysctrl::{gpio, soc_ctrl},
+};
 use hello_sysctrl::NOPS_PER_SEC;
 use panic_halt as _;
 
