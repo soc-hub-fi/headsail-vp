@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use super::mmap;
+use super::{mmap, soc_ctrl};
 use crate::{mask_u32, toggle_u32, unmask_u32};
 
 /// Type-state trait for GPIO in different states
@@ -15,6 +15,11 @@ impl GpioState for Input {}
 pub struct Output;
 impl GpioState for Output {}
 
+/// To obtain an instance:
+///
+/// 1. Obtain [Pads] with [sysctrl::soc_ctrl::Pads::take]
+/// 2. Pick pin: `pads.p9`
+/// 3. Convert pin into GPIO [systcrl::soc_ctrl::Pad::into_gpio]
 pub struct Gpio<const IDX: u32, State: GpioState = Uninit> {
     _pd: PhantomData<State>,
 }
@@ -28,9 +33,7 @@ enum Dir {
 }
 
 impl<const IDX: u32> Gpio<IDX, Uninit> {
-    // TODO: should require proof that the respective pad has been initialized
-    // TODO: perhaps pad0_fn_select should return the new GPIO
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self { _pd: PhantomData }
     }
 
@@ -58,5 +61,24 @@ impl<const IDX: u32> Gpio<IDX, Output> {
 
     pub fn set_low(&mut self) {
         unmask_u32(mmap::GPIO_OUT, 1 << IDX);
+    }
+}
+
+impl<const IDX: u32, S: GpioState> Gpio<IDX, S> {
+    /// Release pad back to its original function
+    ///
+    /// Pins can be released in any state. GPIO register configurations will
+    /// retain their state (until overridden again by HAL methods).
+    pub fn release(self) -> soc_ctrl::Pad<IDX> {
+        unmask_u32(
+            if IDX <= 15 {
+                mmap::PADMUX0
+            } else {
+                mmap::PADMUX1
+            },
+            (soc_ctrl::PadFn::Gpio as u32) << (IDX * 2),
+        );
+
+        soc_ctrl::Pad::<IDX> {}
     }
 }
