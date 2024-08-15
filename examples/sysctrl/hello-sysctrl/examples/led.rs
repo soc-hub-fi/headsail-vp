@@ -1,51 +1,51 @@
 //! Blinks a LED
 //!
-//! Tested working on ASIC:
-//!
-//! 2024-08-15
+//! | Test date     | Status    |
+//! | :-            | :-:       |
+//! | 2024-08-15    | *Works*   |
 #![no_std]
 #![no_main]
 
-use core::ptr;
-use headsail_bsp::rt::entry;
+use headsail_bsp::{read_u32, rt::entry, write_u32};
 use panic_halt as _;
 
 // Below addresses are in SysCtrl memory space
-const GPIO: usize = 0x1a10_1000;
-const GPIO_DIR: usize = GPIO + 0x0;
-const GPIO_OUT: usize = GPIO + 0xc;
-const SOC_CONTROL: usize = 0x1a10_4000;
-const PADMUX0: usize = SOC_CONTROL + 0x10;
+mod mmap {
+    pub(crate) const GPIO: usize = 0x1a10_1000;
+    pub(crate) const GPIO_DIR: usize = GPIO + 0x0;
+    pub(crate) const GPIO_OUT: usize = GPIO + 0xc;
+    pub(crate) const SOC_CONTROL: usize = 0x1a10_4000;
+    pub(crate) const PADMUX0: usize = SOC_CONTROL + 0x10;
+}
+use mmap::*;
 
 // Number of nops SysCtrl is capable of executing at 30 MHz reference clocks
 const NOPS_PER_SEC: usize = match () {
     #[cfg(debug_assertions)]
-    // This is an experimentall found value
+    // This is an experimentally found value
     () => 2_000_000 / 9,
     #[cfg(not(debug_assertions))]
     // This is just a guess for now (10x debug)
-    () => 200_000 / 9,
+    () => 20_000_000 / 9,
 };
 
 #[entry]
 fn main() -> ! {
-    unsafe {
-        ptr::write_volatile(PADMUX0 as *mut _, 0);
-        ptr::write_volatile(GPIO_DIR as *mut _, 0);
+    write_u32(PADMUX0, 0);
+    write_u32(GPIO_DIR, 0);
 
-        // Padmux enable GPIO9
-        ptr::write_volatile(PADMUX0 as *mut _, 0x40000);
+    // Padmux enable GPIO9
+    write_u32(PADMUX0, 0x40000);
 
-        // Set GPIO 9 as output
-        ptr::write_volatile(GPIO_DIR as *mut _, 1 << 9);
-    }
+    // Set GPIO 9 as output
+    write_u32(GPIO_DIR, 1 << 9);
 
     loop {
         unsafe {
             // Toggle GPIO
-            let mut r = ptr::read_volatile(GPIO_OUT as *mut u32);
+            let mut r = read_u32(mmap::GPIO_OUT);
             r ^= 1 << 9;
-            ptr::write_volatile(GPIO_OUT as *mut u32, r);
+            write_u32(GPIO_OUT, r);
 
             // 1 second period
             for _ in 0..NOPS_PER_SEC {
