@@ -15,17 +15,14 @@ use panic_halt as _;
 fn main() -> ! {
     // Set pad9 as GPIO
     let pads = unsafe { soc_ctrl::Pads::steal() };
-
     let mut gpio9 = pads.p9.into_gpio().into_output();
 
     loop {
-        unsafe {
-            gpio9.toggle();
+        gpio9.toggle();
 
-            // Wait for 1 second to produce 0.5 Hz period
-            for _ in 0..NOPS_PER_SEC {
-                core::arch::asm!("nop");
-            }
+        // Wait for 1 second to produce 0.5 Hz period
+        for _ in 0..NOPS_PER_SEC {
+            unsafe { core::arch::asm!("nop") };
         }
     }
 }
