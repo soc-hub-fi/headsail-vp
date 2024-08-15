@@ -69,6 +69,25 @@ pub fn write_u32(addr: usize, val: u32) {
     unsafe { core::ptr::write_volatile(addr as *mut _, val) }
 }
 
+#[inline(always)]
+pub fn mask_u32(addr: usize, mask: u32) {
+    let r = unsafe { core::ptr::read_volatile(addr as *const u32) };
+    unsafe { core::ptr::write_volatile(addr as *mut _, r | mask) }
+}
+
+#[inline(always)]
+pub fn unmask_u32(addr: usize, unmask: u32) {
+    let r = unsafe { core::ptr::read_volatile(addr as *const u32) };
+    unsafe { core::ptr::write_volatile(addr as *mut _, r & !unmask) }
+}
+
+#[inline(always)]
+pub fn toggle_u32(addr: usize, toggle_bits: u32) {
+    let mut r = read_u32(addr);
+    r ^= toggle_bits;
+    write_u32(addr, r);
+}
+
 #[cfg(feature = "alloc")]
 pub fn init_alloc() {
     unsafe { alloc::init_heap() };
