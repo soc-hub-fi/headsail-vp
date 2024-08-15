@@ -26,31 +26,3 @@ pub(crate) const TIMER0_ADDR: usize = 0x5_0000;
 pub(crate) const TIMER1_ADDR: usize = 0x5_0010;
 pub(crate) const TIMER2_ADDR: usize = 0x5_0020;
 pub(crate) const TIMER3_ADDR: usize = 0x5_0030;
-
-/// Length for ram_0, ram_1, ram_2, ram_3
-pub(crate) const RAM_LEN: usize = 0x8000;
-
-pub(crate) const RAM0: usize = match () {
-    #[cfg(not(feature = "hpc"))]
-    () => 0x9008_0000,
-    #[cfg(feature = "hpc")]
-    () => 0x1_9008_0000,
-};
-pub(crate) const RAM1: usize = match () {
-    #[cfg(not(feature = "hpc"))]
-    () => 0x9028_0000,
-    #[cfg(feature = "hpc")]
-    () => 0x1_9028_0000,
-};
-pub(crate) const RAM2: usize = match () {
-    #[cfg(not(feature = "hpc"))]
-    () => 0x9048_0000,
-    #[cfg(feature = "hpc")]
-    () => 0x1_9048_0000,
-};
-pub(crate) const RAM3: usize = match () {
-    #[cfg(not(feature = "hpc"))]
-    () => 0x9068_0000,
-    #[cfg(feature = "hpc")]
-    () => 0x1_9068_0000,
-};
