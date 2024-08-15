@@ -1,8 +1,9 @@
 //! Blinks a LED
 //!
-//! | Test date     | Status    |
-//! | :-            | :-:       |
-//! | 2024-08-15    | *Works*   |
+//! | Date              | Status    | Changes   |
+//! | :-                | :-:       | :-        |
+//! | 2024-08-15        | *Works*   |           |
+//! | 2024-08-15T1530   | Untested  | Use HAL   |
 #![no_std]
 #![no_main]
 
