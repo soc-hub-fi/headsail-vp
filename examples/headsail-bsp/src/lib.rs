@@ -1,6 +1,10 @@
 //! A light-weight memory map based board support package for Headsail.
 #![no_std]
 
+#[cfg(feature = "sysctrl")]
+pub mod gpio;
+#[cfg(feature = "sysctrl")]
+pub mod soc_ctrl;
 pub mod sprintln;
 pub mod uart;
 pub mod timer {
