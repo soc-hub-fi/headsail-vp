@@ -24,7 +24,7 @@ pub struct Gpio<const IDX: u32, State: GpioState = Uninit> {
     _pd: PhantomData<State>,
 }
 
-pub type Gpio9 = Gpio<9, Uninit>;
+pub type Gpio9<S> = Gpio<9, S>;
 
 #[repr(u32)]
 enum Dir {
@@ -80,5 +80,13 @@ impl<const IDX: u32, S: GpioState> Gpio<IDX, S> {
         );
 
         soc_ctrl::Pad::<IDX> {}
+    }
+
+    /// # Safety
+    ///
+    /// This will not configure the pin in any way (i.e., for use as GPIO or
+    /// direction).
+    pub unsafe fn steal() -> Self {
+        Self { _pd: PhantomData }
     }
 }
