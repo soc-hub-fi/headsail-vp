@@ -8,25 +8,22 @@
 
 use headsail_bsp::{
     rt::entry,
-    sysctrl::{gpio, soc_ctrl},
+    sysctrl::{gpio::Gpio9, soc_ctrl},
 };
 use hello_sysctrl::NOPS_PER_SEC;
 use panic_halt as _;
 
 #[entry]
 fn main() -> ! {
+    // Set pad9 as GPIO
     soc_ctrl::pad0_fn_select(0);
-    gpio::reset_dir();
-
-    // Padmux enable GPIO9
     soc_ctrl::pad0_fn_select(0x40000);
 
-    // Set GPIO 9 as output
-    gpio::set_dir_out(9);
+    let mut gpio9 = Gpio9::new().into_output();
 
     loop {
         unsafe {
-            gpio::toggle(9);
+            gpio9.toggle();
 
             // Wait for 1 second to produce 0.5 Hz period
             for _ in 0..NOPS_PER_SEC {
