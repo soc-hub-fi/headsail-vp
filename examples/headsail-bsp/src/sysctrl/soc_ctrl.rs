@@ -1,4 +1,5 @@
-use crate::{mmap, read_u32, write_u32};
+use super::mmap;
+use crate::{read_u32, write_u32};
 
 pub fn pad0_fn_select(val: u32) {
     let r = read_u32(mmap::PADMUX0);
