@@ -2,7 +2,7 @@
 pub(crate) const UART0_ADDR: usize = 0x1FFF00000;
 #[cfg(not(feature = "hpc"))]
 pub(crate) const UART0_ADDR: usize = 0xFFF00000;
-pub(crate) const UART0_THR: usize = UART0_ADDR + 0;
+pub(crate) const UART0_THR: usize = UART0_ADDR;
 
 // NOTE: (20240614 vaino-waltteri.granat@tuni.fi) This applies to renode NS16550 uart, but might not apply to headsail ASIC
 pub(crate) const UART_DATA_READY_OFFSET: usize = 5;
