@@ -59,6 +59,7 @@ fn main() -> ! {
     let mut failures = 0;
     for (idx, t) in cases.iter().enumerate() {
         print_test_case_info(idx, count, longest_uid, t.uid, t.addr);
+        // ???: does not currently test for reset values!
         if let Err(e) = (t.function)() {
             sprintln!("  {:?}", Error(e));
             // Report failure but run to completion
