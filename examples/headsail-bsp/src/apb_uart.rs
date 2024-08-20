@@ -77,10 +77,24 @@ impl<const BASE_ADDR: usize> ApbUart<BASE_ADDR> {
     }
 
     #[inline]
-    pub fn write(&mut self, s: &str) {
-        for b in s.as_bytes() {
+    pub fn write(&mut self, buf: &[u8]) {
+        for b in buf {
             self.putc(*b);
         }
+    }
+
+    #[inline]
+    pub fn write_str(&mut self, s: &str) {
+        self.write(s.as_bytes());
+    }
+
+    /// Flush this output stream, blocking until all intermediately buffered contents reach their
+    /// destination.
+    #[inline]
+    pub fn flush(&mut self) {
+        // Wait for hardware to report completion
+        #[cfg(feature = "asic")]
+        while !self.is_transmit_empty() {}
     }
 
     #[inline]
