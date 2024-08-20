@@ -4,3 +4,5 @@ run example target='riscv64imac':
 check-hpc:
     cargo check --examples -Fhpc-rt -Fpanic-apb-uart0 -Falloc --target riscv64imac-unknown-none-elf
 
+clippy-hpc:
+    cargo clippy --examples -Fhpc-rt -Fpanic-apb-uart0 -Falloc --target riscv64imac-unknown-none-elf -- -Dclippy::style
