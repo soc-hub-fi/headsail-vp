@@ -12,7 +12,7 @@ fn main() -> ! {
     sprintln!("Connect to APB UART 0 with: screen /tmp/uart0");
     init_alloc();
     loop {
-        let res = uart.uart_read_to_heap(8);
+        let res = uart.read_to_heap(8);
         for x in res {
             if x != 0 {
                 sprint!("{:x} ", x)

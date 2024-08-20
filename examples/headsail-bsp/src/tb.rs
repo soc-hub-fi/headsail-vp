@@ -10,15 +10,15 @@ pub const TAG_OK: &str = "[OK]";
 
 pub fn report_pass() {
     let mut uart = unsafe { ApbUart0::instance() };
-    uart.uart_write(TAG_PASS);
+    uart.write(TAG_PASS);
 }
 
 pub fn report_fail() {
     let mut uart = unsafe { ApbUart0::instance() };
-    uart.uart_write(TAG_FAIL);
+    uart.write(TAG_FAIL);
 }
 
 pub fn report_ok() {
     let mut uart = unsafe { ApbUart0::instance() };
-    uart.uart_write(TAG_OK);
+    uart.write(TAG_OK);
 }

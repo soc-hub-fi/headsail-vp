@@ -32,7 +32,7 @@ impl ufmt::uWrite for ApbUart0 {
     type Error = core::convert::Infallible;
 
     fn write_str(&mut self, s: &str) -> Result<(), Self::Error> {
-        self.uart_write(s);
+        self.write(s);
         Ok(())
     }
 }

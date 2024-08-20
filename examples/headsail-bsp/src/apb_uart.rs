@@ -76,9 +76,8 @@ impl<const BASE_ADDR: usize> ApbUart<BASE_ADDR> {
         unsafe { (read_u8(BASE_ADDR + crate::mmap::UART_LINE_STATUS_OFFSET) & 0x20) != 0 }
     }
 
-    // TODO: rename: write
     #[inline]
-    pub fn uart_write(&mut self, s: &str) {
+    pub fn write(&mut self, s: &str) {
         for b in s.as_bytes() {
             self.putc(*b);
         }
@@ -104,7 +103,7 @@ impl<const BASE_ADDR: usize> ApbUart<BASE_ADDR> {
     }
 
     #[cfg(feature = "alloc")]
-    pub fn uart_read_to_heap(&mut self, bytes: usize) -> Vec<u8> {
+    pub fn read_to_heap(&mut self, bytes: usize) -> Vec<u8> {
         let mut result = Vec::with_capacity(bytes);
         for _ in 0..bytes {
             result.push(self.getc())
