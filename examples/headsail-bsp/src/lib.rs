@@ -22,6 +22,10 @@ pub mod timer {
     pub use crate::timer_unit::*;
 }
 pub mod tb;
+#[cfg(feature = "hpc-pac")]
+pub use headsail_hpc_pac as pac;
+#[cfg(feature = "sysctrl-pac")]
+pub use headsail_sysctrl_pac as pac;
 
 #[cfg(not(feature = "vp"))]
 mod apb_timer;
