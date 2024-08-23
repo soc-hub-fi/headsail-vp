@@ -9,7 +9,6 @@
 
 use headsail_bsp::{rt::entry, sysctrl::soc_ctrl};
 use hello_sysctrl::NOPS_PER_SEC;
-use panic_halt as _;
 
 #[entry]
 fn main() -> ! {

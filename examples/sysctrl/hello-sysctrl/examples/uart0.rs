@@ -2,7 +2,6 @@
 #![no_main]
 
 use headsail_bsp::{apb_uart::ApbUart0, rt::entry, sysctrl::soc_ctrl};
-use panic_halt as _;
 
 #[entry]
 fn main() -> ! {
