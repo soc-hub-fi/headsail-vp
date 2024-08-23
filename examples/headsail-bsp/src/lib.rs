@@ -79,6 +79,7 @@ pub fn mask_u32(addr: usize, mask: u32) {
     unsafe { core::ptr::write_volatile(addr as *mut _, r | mask) }
 }
 
+/// Unmasks supplied bits from given register
 #[inline(always)]
 pub fn unmask_u32(addr: usize, unmask: u32) {
     let r = unsafe { core::ptr::read_volatile(addr as *const u32) };
