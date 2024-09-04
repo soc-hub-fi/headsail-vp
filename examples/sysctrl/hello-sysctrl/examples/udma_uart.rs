@@ -2,11 +2,14 @@
 #![no_std]
 #![no_main]
 
+use core::arch::asm;
+
 use headsail_bsp::{
     pac,
     rt::entry,
     sysctrl::{soc_ctrl, udma::Udma},
 };
+use hello_sysctrl::NOPS_PER_SEC;
 
 #[entry]
 fn main() -> ! {
@@ -38,7 +41,11 @@ fn main() -> ! {
         }
     });
 
-    uart.write(b"Hello uDMA UART HAL\r\n");
+    loop {
+        uart.write(b"Hello uDMA UART HAL\r\n");
 
-    loop {}
+        for _ in 0..NOPS_PER_SEC {
+            unsafe { asm!("nop") };
+        }
+    }
 }
