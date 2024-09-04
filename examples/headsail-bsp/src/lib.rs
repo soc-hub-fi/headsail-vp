@@ -79,10 +79,26 @@ pub fn mask_u32(addr: usize, mask: u32) {
     unsafe { core::ptr::write_volatile(addr as *mut _, r | mask) }
 }
 
+/// # Safety
+///
+/// Unaligned writes may fail to produce expected results on RISC-V.
+#[inline(always)]
+pub fn mask_u8(addr: usize, mask: u8) {
+    let r = unsafe { core::ptr::read_volatile(addr as *const u8) };
+    unsafe { core::ptr::write_volatile(addr as *mut _, r | mask) }
+}
+
 /// Unmasks supplied bits from given register
 #[inline(always)]
 pub fn unmask_u32(addr: usize, unmask: u32) {
     let r = unsafe { core::ptr::read_volatile(addr as *const u32) };
+    unsafe { core::ptr::write_volatile(addr as *mut _, r & !unmask) }
+}
+
+/// Unmasks supplied bits from given register
+#[inline(always)]
+pub fn unmask_u8(addr: usize, unmask: u8) {
+    let r = unsafe { core::ptr::read_volatile(addr as *const u8) };
     unsafe { core::ptr::write_volatile(addr as *mut _, r & !unmask) }
 }
 
