@@ -43,7 +43,7 @@ pub use ufmt;
 pub mod alloc;
 #[cfg(feature = "hpc")]
 mod hpc;
-mod mmap;
+pub mod mmap;
 #[cfg(feature = "panic-apb-uart0")]
 mod ufmt_panic;
 
