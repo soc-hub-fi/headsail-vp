@@ -1,3 +1,6 @@
+// Allowed for extra clarity in certain cases
+#![allow(clippy::identity_op)]
+
 pub const EXT_ACCESS_BIT: usize = match () {
     #[cfg(feature = "hpc")]
     () => 1 << 32,
