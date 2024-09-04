@@ -135,6 +135,7 @@ mod uart {
 }
 pub use self::uart::*;
 
+// HPC's timers
 pub const TIMER0_ADDR: usize = 0x5_0000;
 pub const TIMER1_ADDR: usize = 0x5_0010;
 pub const TIMER2_ADDR: usize = 0x5_0020;
