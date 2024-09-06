@@ -1,6 +1,5 @@
-//! Macros to implement Rust-style print formatting using `print`/`println`
-use crate::apb_uart::ApbUart0;
-pub const UART: ApbUart0 = unsafe { ApbUart0::instance() };
+//! Macros to implement Rust-style print formatting using `sprint`/`sprintln`
+pub const UART: crate::apb_uart::ApbUart0 = unsafe { crate::apb_uart::ApbUart0::instance() };
 
 #[macro_export]
 macro_rules! sprint {
