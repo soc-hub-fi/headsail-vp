@@ -27,12 +27,3 @@ macro_rules! sprintln {
         sprint!("\r\n");
     }};
 }
-
-impl ufmt::uWrite for ApbUart0 {
-    type Error = core::convert::Infallible;
-
-    fn write_str(&mut self, s: &str) -> Result<(), Self::Error> {
-        self.write_str(s);
-        Ok(())
-    }
-}

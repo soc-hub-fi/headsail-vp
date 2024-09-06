@@ -70,3 +70,12 @@ impl<'u> UdmaUart<'u, Enabled> {
         self.write(s.as_bytes());
     }
 }
+
+impl<'a> ufmt_write::uWrite for UdmaUart<'a, Enabled> {
+    type Error = core::convert::Infallible;
+
+    fn write_str(&mut self, s: &str) -> Result<(), Self::Error> {
+        self.write(s.as_bytes());
+        Ok(())
+    }
+}

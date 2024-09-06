@@ -29,6 +29,7 @@ pac = []
 
 [dependencies]
 ufmt = "0.2.0"
+ufmt-write = "0.1.0"
 riscv-rt = { version = "0.12.2", optional = true }
 riscv = { version = "0.11.1" }
 riscv-peripheral = { version = "0.1.0", optional = true }
