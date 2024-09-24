@@ -837,20 +837,12 @@ class Dla:
                     for w in range(width):
                         idx = c + (f * input_channels) + (input_channels*filter_amount) * w + (input_channels * filter_amount * width) * h
                         column_wise.append(data[idx])
-        #print('[{}]'.format(', '.join("{:2}".format(hex(x & 0xff)[2:-1]) for x in column_wise)))
 
         column_wise = reshape(column_wise, (filter_amount, input_channels, height, width))
 
         print_matrix(column_wise[0][0], "flat kernel K0 C0:", pformat="decimal")
         print_matrix(column_wise[0][1], "flat kernel K0 C1:", pformat="decimal")
         print_matrix(column_wise[0][2], "flat kernel K0 C2:", pformat="decimal")
-        print_matrix(column_wise[1][0], "flat kernel K1 C0:", pformat="decimal")
-        print_matrix(column_wise[1][1], "flat kernel K1 C1:", pformat="decimal")
-        print_matrix(column_wise[1][2], "flat kernel K1 C2:", pformat="decimal")
-        print_matrix(column_wise[2][0], "flat kernel K2 C0:", pformat="decimal")
-        print_matrix(column_wise[2][1], "flat kernel K2 C1:", pformat="decimal")
-        print_matrix(column_wise[2][2], "flat kernel K2 C2:", pformat="decimal")
-
 
         return filter_amount, s_channels, width, height, column_wise
 
@@ -904,8 +896,6 @@ class Dla:
 
         column_wise = reshape(column_wise, (channels, height, width))
         print_matrix(column_wise[0], "flat input:", pformat="decimal")
-        print_matrix(column_wise[1], "flat input:", pformat="decimal")
-        print_matrix(column_wise[2], "flat input:", pformat="decimal")
         return channels, width, height, column_wise
 
     def get_bias(self, values_to_read):
@@ -937,7 +927,6 @@ class Dla:
                 value = (high_byte << 8) + low_byte
                 bias.append(cast_long_to_signed_16(value))
                 offset += 2 # 16 bit width
-            #print(bias)
             return bias
         else:
             print("WARNING: trying to read bias outside of VP memory region as address: {:x}".format(bias_addr))
@@ -1051,8 +1040,8 @@ class Dla:
             i = 0
             # Clip results
             res = dla.mac_clip(res)
-            # for i, r in enumerate(res):
-            print_matrix(res[0], "{} MAC:".format(i))
+            for i, r in enumerate(res):
+                print_matrix(res[0], "{} MAC:".format(i))
 
         if self.get_register(HANDSHAKE, HANDSHAKE_BYPASS_ENABLE_OFFSET, 1):
             if self.get_register(HANDSHAKE, HANDSHAKE_BIAS_ENABLE_OFFSET, 1):
@@ -1070,30 +1059,29 @@ class Dla:
                     tmp.append(a)
 
                 res = tmp
-                # for (i, r) in enumerate(res):
-                print_matrix(res[0], "{} BIAS:".format(i))
+                for (i, r) in enumerate(res):
+                    print_matrix(res[0], "{} BIAS:".format(i))
 
             # ReLU (active low)
             if self.get_register(HANDSHAKE, HANDSHAKE_ACTIVE_ENABLE_OFFSET, 1):
                 print("RELU")
                 res = execute_for_all_elements(self.mac.relu_native, res)
-                # for (i, r) in enumerate(res):
-                print_matrix(res[0], "{} ReLU:".format(i))
+                for (i, r) in enumerate(res):
+                    print_matrix(res[0], "{} ReLU:".format(i))
 
             # Clipping and rounding
             res = dla.pp_clip(res)
             res = execute_for_all_elements(rounding, res)
-            #for (i, r) in enumerate(res):
-            print_matrix(res[0], "{} PP:".format(i))
+            for (i, r) in enumerate(res):
+                print_matrix(res[0], "{} PP:".format(i))
 
             output_bit_width = 32 - self.get_register(PP_CTRL, PP_CLIP_OFFSET, 5) # Pack output according to clipping
 
         # After calculating one layer the device needs new configuration
-        # if output_bit_width == 32:
-        #     self.write_output(res, 32)
-        # else:
-        #     self.write_output(res, 8)
-        self.write_output(res, 8)
+        if output_bit_width == 32:
+            self.write_output(res, 32)
+        else:
+            self.write_output(res, 8)
 
         # Set Done status
         self.set_register(STATUS_ADDR, BUF_DONE_OFFSET, 1, 1)
@@ -1218,15 +1206,10 @@ class DlaMac:
                             for mat_y in range(len(range_y)):
                                 mat_sub[mat_x][mat_y] = channel_data[range_x[mat_x]][range_y[mat_y]]
 
-                        # print("w:", w, "h:", h, "mat_y:", mat_y, "mat_x:", mat_x, "kernel_idx:", kernel_idx, "channel_idx:", channel_idx)
-                        # print_matrix(mat_sub, "sub_matrix", "hexadecimal")
                         channel_res = self.mat_sum(self.matmul_element_wise(mat_sub, kernel[channel_idx]))
                         channel_sum += channel_res
 
-
                     output_filters[kernel_idx][w][h] = channel_sum
-                    # print("Output:", output_filters[kernel_idx][w][h])
-
 
         return output_filters
 
