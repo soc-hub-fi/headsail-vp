@@ -12,7 +12,7 @@ macro_rules! print_example_name {
         use $crate::sysctrl_print;
         sysctrl_print(b"[");
         sysctrl_print(core::file!().as_bytes());
-        sysctrl_print(b"]");
+        sysctrl_print(b"]\r\n");
     };
 }
 
