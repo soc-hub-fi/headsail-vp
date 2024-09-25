@@ -295,7 +295,7 @@ def cast_long_to_signed_byte(value):
     Returns:
     byte -- Int Signed value in range -128..127
     """
-    assert(0 <= value <= 255), "Assert failed! Value doesn't fit byte"
+    assert(0 <= value <= 0xFF), "Assert failed! Value doesn't fit byte"
     value = value & 0xFF
     if value <= 127:
         return value
@@ -310,7 +310,7 @@ def cast_long_to_signed_16(value):
     Returns:
     byte -- Int Signed value in range -128..127
     """
-    assert(0 <= value <= 65535), "Assert failed! Value doesn't fit 2 bytes"
+    assert(0 <= value <= 0xFFFF), "Assert failed! Value doesn't fit 2 bytes"
     value = value & 0xFFFF
     if value <= 32767:
         return value
@@ -1166,7 +1166,6 @@ class DlaMac:
 
 
         # Apply each kernel to input_img
-        first_pass = True
         for (kernel_idx, kernel) in enumerate(kernels):
             if w_middle_zero:
                 center_x_0 = h_kernel_max_offset * dilation[0]
@@ -1255,7 +1254,7 @@ class DlaMac:
         if not isinstance(A, list) and not isinstance(B, list):
             return A + B
 
-        assert len(A) == len(B), "Assert failed! Different sized operands in matsum"
+        assert(len(A) == len(B)), "Assert failed! Different sized operands in matsum"
         C = []
         for a, b in zip(A, B):
             C.append(self.matsum_element_wise(a, b))
