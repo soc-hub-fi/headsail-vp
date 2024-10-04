@@ -134,7 +134,7 @@ fn main() -> ! {
         cluster_cfg.execute_region_length2().read().bits(),
     );
     sprintln!(
-        "Execute region for SDRAM is now [{}..{}]",
+        "Execute region for SDRAM is now [{:#x}..{:#x}]",
         r2start,
         r2start + r2len
     );
@@ -158,7 +158,7 @@ fn main() -> ! {
         cluster_cfg.execute_region_length3().read().bits(),
     );
     sprintln!(
-        "Execute region for C2C is now [{}..{}]",
+        "Execute region for C2C is now [{:#x}..{:#x}]",
         r3start,
         r3start + r3len
     );
@@ -183,7 +183,7 @@ fn main() -> ! {
         cluster_cfg.execute_region_length4().read().bits(),
     );
     sprintln!(
-        "Execute region for shared SRAMs is now [{}..{}]",
+        "Execute region for shared SRAMs is now [{:#x}..{:#x}]",
         r4start,
         r4start + r4len
     );
