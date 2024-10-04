@@ -11,6 +11,11 @@ const BOOTRAM_OFFSET: usize = 0x10000;
 const HPC_BOOTRAM_ADDR: usize = HPC_BASE_ADDR + BOOTRAM_OFFSET;
 #[entry]
 fn main() -> ! {
+    // These lines are necessary to initialize uDMA UART prints for sprint-macro
+    soc_ctrl::periph_clk_div_set(0);
+    hello_sysctrl::UdmaUart::init();
+    print_example_name!();
+
     // Enable interconnect, TLP and HPC
     let hpc_bit = 1 << 2;
     let icn_bit = 1 << 5;
@@ -28,13 +33,6 @@ fn main() -> ! {
     // Configure TLP clocks
     let conf_val = 0b1001;
     soc_ctrl::clk3_mask(conf_val);
-
-    soc_ctrl::periph_clk_div_set(0);
-
-    // This line is necessary to initialize uDMA UART prints for sprint-macro
-    hello_sysctrl::UdmaUart::init();
-
-    print_example_name!();
 
     // Enable SDRAM
     let ddr_mode = 0b1;
