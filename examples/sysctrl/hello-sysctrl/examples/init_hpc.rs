@@ -46,7 +46,7 @@ fn main() -> ! {
     hello_sysctrl::UdmaUart::init();
     print_example_name!();
 
-    // Enable interconnect, TLP and HPC
+    // Enable HPC, interconnect, TLP and SDRAM
     let hpc_bit = 1 << 2;
     let icn_bit = 1 << 5;
     let tlp_bit = 1 << 8;
@@ -80,7 +80,7 @@ fn main() -> ! {
     // Configure TLP clocks
     let tlp_clk_cfg = 0b1001;
     verbose_call_with_pattern(
-        "Configure ICN clocks",
+        "Configure TLP clocks",
         soc_ctrl::clk3_mask,
         tlp_clk_cfg,
         "SOC_CTRL_CLK_CTRL3",
