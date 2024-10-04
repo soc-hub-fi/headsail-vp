@@ -53,7 +53,7 @@ fn main() -> ! {
     let sdram_bit = 1 << 3;
     verbose_call_with_pattern(
         "Enable subsystems: HPC, ICN, TLP, SDRAM",
-        |pat| soc_ctrl::ss_enable(pat),
+        soc_ctrl::ss_enable,
         hpc_bit | icn_bit | tlp_bit | sdram_bit,
         "SOC_CTRL_SS_EN",
     );
@@ -63,7 +63,7 @@ fn main() -> ! {
     let sdram_clk_cfg = 0b1001 << 24;
     verbose_call_with_pattern(
         "Configure HPC & SDRAM clocks",
-        |pat| soc_ctrl::clk1_mask(pat),
+        soc_ctrl::clk1_mask,
         hpc_clk_cfg | sdram_clk_cfg,
         "SOC_CTRL_CLK_CTRL1",
     );
@@ -72,7 +72,7 @@ fn main() -> ! {
     let icn_clk_cfg = 0b1001 << 8;
     verbose_call_with_pattern(
         "Configure ICN clocks",
-        |pat| soc_ctrl::clk2_mask(pat),
+        soc_ctrl::clk2_mask,
         icn_clk_cfg,
         "SOC_CTRL_CLK_CTRL2",
     );
@@ -81,7 +81,7 @@ fn main() -> ! {
     let tlp_clk_cfg = 0b1001;
     verbose_call_with_pattern(
         "Configure ICN clocks",
-        |pat| soc_ctrl::clk3_mask(pat),
+        soc_ctrl::clk3_mask,
         tlp_clk_cfg,
         "SOC_CTRL_CLK_CTRL3",
     );
@@ -90,14 +90,14 @@ fn main() -> ! {
     let ddr_mode = 0b1;
     verbose_call_with_pattern(
         "Set SDRAM DDR mode",
-        |pat| sdram::sdram_cfg_axi_ddr_mode_mask(pat),
+        sdram::sdram_cfg_axi_ddr_mode_mask,
         ddr_mode,
         "SDRAM_CFG_AXI_DDR_MODE_ADDR",
     );
     let axi_enable = 0b1 << 1;
     verbose_call_with_pattern(
         "Enable AXI for SDRAM",
-        |pat| sdram::sdram_cfg_axi_enable_mask(pat),
+        sdram::sdram_cfg_axi_enable_mask,
         axi_enable,
         "SDRAM_CFG_AXI_ENABLE_ADDR",
     );
@@ -192,7 +192,7 @@ fn main() -> ! {
     let hpc_core_en = 0b1 << 20;
     verbose_call_with_pattern(
         "Enable HPC core #0",
-        |pat| soc_ctrl::clk1_mask(pat),
+        soc_ctrl::clk1_mask,
         hpc_core_en,
         "SOC_CTRL_CLK_CTRL1",
     );
