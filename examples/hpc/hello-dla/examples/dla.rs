@@ -10,5 +10,6 @@ fn main() -> ! {
     dla_write("Hello DLA");
     let mut buf: [u8; 9] = [0; 9];
     dla_read(&mut buf, 9, 0);
+    #[allow(clippy::empty_loop)]
     loop {}
 }
