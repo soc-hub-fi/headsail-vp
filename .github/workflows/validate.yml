@@ -40,6 +40,10 @@ jobs:
         rustup update
         rustup target add riscv64imac-unknown-none-elf riscv32im-unknown-none-elf
 
+    - uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: "./examples/headsail-bsp"
+
     - name: Run linter
       working-directory: ./examples/headsail-bsp
       run: cargo clippy -- -D clippy::style
@@ -82,6 +86,9 @@ jobs:
       run: |
         rustup update
         rustup target add riscv64imac-unknown-none-elf
+    - uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: "./examples/hpc/"
     - name: Run linter
       working-directory: ./examples/hpc/
       run: cargo clippy -- -D clippy::style
@@ -151,6 +158,9 @@ jobs:
         $RISCV_XLEN-unknown-elf-ld --version
     - name: Install rustup target
       run: rustup target add riscv64imac-unknown-none-elf
+    - uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: "./examples/hpc"
     - name: Build validation
       working-directory: ./examples/hpc/dla-driver
       run: cargo build --example validate -Fvp -Fhpc --target riscv64imac-unknown-none-elf
@@ -203,6 +213,9 @@ jobs:
       run: |
         rustup update
         rustup target add riscv64imac-unknown-none-elf riscv32im-unknown-none-elf
+    - uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: "./examples/headsail-bsp-ffi"
     - name: Build FFI without RT on SysCtrl
       working-directory: ./examples/headsail-bsp-ffi
       run: cargo build --target=riscv32im-unknown-none-elf -Fpanic-apb-uart0
