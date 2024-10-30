@@ -30,6 +30,9 @@ jobs:
     env:
       RUSTFLAGS: -D warnings
 
+    strategy:
+      fail-fast: false
+
     steps:
     - uses: actions/checkout@v4
     - name: Install requirements
@@ -70,6 +73,9 @@ jobs:
   build-dla-example:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+
     steps:
     - uses: actions/checkout@v4
     - name: Install requirements
@@ -98,6 +104,9 @@ jobs:
       image: antmicro/renode:1.14.0
       options: --user root
 
+    strategy:
+      fail-fast: false
+
     steps:
     - uses: actions/checkout@v4
     - name: Download artifact
@@ -116,6 +125,9 @@ jobs:
 
   build-dla-validation:
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
 
     env:
       RISCV: /opt/riscv/
@@ -153,6 +165,9 @@ jobs:
   run-dla-validation:
     needs: build-dla-validation
 
+    strategy:
+      fail-fast: false
+
     runs-on: ubuntu-latest
     container:
       image: antmicro/renode:1.14.0
@@ -178,6 +193,9 @@ jobs:
 
   build-ffi:
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v4
