@@ -9,5 +9,5 @@
     "rust-analyzer.check.allTargets": false,
     "rust-analyzer.cargo.extraArgs": [
         "--examples"
-    ]
+    ],
 }

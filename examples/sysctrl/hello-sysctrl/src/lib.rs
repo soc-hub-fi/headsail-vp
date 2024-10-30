@@ -1,5 +1,6 @@
 #![no_std]
 #![no_main]
+
 use headsail_bsp::{
     pac::{self, Sysctrl},
     ufmt,
