@@ -3,7 +3,6 @@
 
 use headsail_bsp::{rt::entry, sprintln};
 use hello_dla::{dla_read, dla_write};
-use panic_halt as _;
 
 #[entry]
 fn main() -> ! {
