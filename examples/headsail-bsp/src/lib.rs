@@ -49,6 +49,9 @@ pub mod mmap;
 #[cfg(any(feature = "panic-apb-uart0", feature = "panic-sysctrl-uart"))]
 mod ufmt_panic;
 
+#[cfg(feature = "alloc")]
+pub use alloc::init_heap;
+
 /// # Safety
 ///
 /// Unaligned reads may fail to produce expected results on RISC-V.
@@ -109,9 +112,4 @@ pub fn toggle_u32(addr: usize, toggle_bits: u32) {
     let mut r = read_u32(addr);
     r ^= toggle_bits;
     write_u32(addr, r);
-}
-
-#[cfg(feature = "alloc")]
-pub fn init_alloc() {
-    unsafe { alloc::init_heap() };
 }
