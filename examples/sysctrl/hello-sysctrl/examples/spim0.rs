@@ -2,7 +2,7 @@
 //!
 //! | Date              | Status     | Changes   |
 //! | :-                | :-:        | :-        |
-//! | 2024-10-25        | *untested*    |           |
+//! | 2024-10-25        | Tested     |           |
 #![no_std]
 #![no_main]
 
