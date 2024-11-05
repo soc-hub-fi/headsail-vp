@@ -2,6 +2,7 @@ use core::marker::PhantomData;
 
 use super::{Disabled, Enabled};
 use crate::pac;
+use embedded_io::ErrorType;
 
 pub const SPI_CMD_SOT: u32 = 0x10000000;
 pub const SPI_CMD_EOT: u32 = 0x90000000;
@@ -221,5 +222,43 @@ impl<'u> UdmaSpim<'u, Enabled> {
 
         // Dispatch transmission
         spim.spim_rx_cfg().modify(|_, w| w.en().set_bit());
+    }
+}
+
+#[derive(Debug)]
+pub struct SpimError;
+impl embedded_io::Error for SpimError {
+    fn kind(&self) -> embedded_io::ErrorKind {
+        todo!()
+    }
+}
+
+impl<'u> ErrorType for UdmaSpim<'u, Enabled> {
+    type Error = SpimError;
+}
+
+impl<'u> embedded_io::Read for UdmaSpim<'u, Enabled> {
+    fn read(&mut self, buf: &mut [u8]) -> Result<usize, Self::Error> {
+        let spim = self.0;
+        // Here's the UART version of `read` that would need to be ported to SPI-M:
+        /*
+        // Block until SPI-M reports data is available
+        while !self.0.read_ready() {}
+
+        // Block until device reports ability to enqueue
+        while !spim.spim_rx_cfg().read().pending().bit_is_set() {}
+
+        unsafe { self.enqueue_rx(buf) }
+
+        // Block again until the transfer is complete
+        while spim.spim_rx_saddr().read().bits() != 0 {}
+        */
+
+        // Retrieve data, signalling completion to device
+        buf.copy_from_slice(todo!() /*self.0.read_data()*/);
+        todo!();
+
+        // The return length should match the number of bytes that were copied from the device
+        Ok(todo!())
     }
 }
