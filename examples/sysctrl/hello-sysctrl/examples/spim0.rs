@@ -39,7 +39,7 @@ fn main() -> ! {
     }
 
     // Receive 8 bytes
-    spim.receive(&rx_data);
+    spim.receive_data(&rx_data);
     spim.write_eot();
     uart.write_str("Data received!\n\r");
 
