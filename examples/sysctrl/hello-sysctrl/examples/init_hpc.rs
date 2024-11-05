@@ -3,7 +3,13 @@
 
 use core::ptr;
 
-use headsail_bsp::{pac, rt::entry, sdram, sysctrl::soc_ctrl, ufmt};
+use headsail_bsp::{
+    pac,
+    rt::entry,
+    sdram,
+    sysctrl::{mmap, soc_ctrl},
+    ufmt,
+};
 use hello_sysctrl::{print_example_name, sprint, sprintln};
 
 const HPC_BASE_ADDR: usize = 0xFFE00000;
@@ -216,13 +222,9 @@ fn main() -> ! {
     // available on the auto-generated memory map as of now
 
     // Turn on HPC core #0
-    let hpc_core_en = 0b1 << 20;
-    verbose_call_with_pattern(
-        "Enable HPC core #0",
-        soc_ctrl::clk1_mask,
-        hpc_core_en,
-        "SOC_CTRL_CLK_CTRL1",
-    );
+    let hpc_core_en = 0b1 << 4;
+    let addr = 0x1a10_0000 + 0x4000 + 0x9c;
+    unsafe { core::ptr::write_volatile(addr as *mut _, hpc_core_en) }
 
     sprintln!("Bootloader (init_hpc) done. Looping in place.");
     loop {
