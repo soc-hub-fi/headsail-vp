@@ -50,6 +50,8 @@ impl<'u> UdmaSpim<'u, Enabled> {
 
     #[inline(always)]
     pub fn write_tx(&mut self, buf: &[u8]) {
+        while !self.can_enqueue_tx() {}
+
         // SAFETY: we spin lock on spim_tx_saddr to make sure the transfer is complete before
         // dropping the stack frame.
         unsafe { self.enqueue_tx(buf) };
@@ -62,6 +64,8 @@ impl<'u> UdmaSpim<'u, Enabled> {
 
     #[inline(always)]
     pub fn read_rx(&mut self, buf: &mut [u8]) {
+        while !self.can_enqueue_rx() {}
+
         // SAFETY: we spin lock on spim_rx_saddr to make sure the transfer is complete before
         // dropping the stack frame.
         unsafe { self.enqueue_rx(buf) };
@@ -73,6 +77,8 @@ impl<'u> UdmaSpim<'u, Enabled> {
 
     #[inline(always)]
     pub fn write_cmd(&mut self, buf: &[u8]) {
+        while !self.can_enqueue_cmd() {}
+
         // SAFETY: we spin lock on spim_cmd_saddr to make sure the transfer is complete before
         // dropping the stack frame.
         unsafe { self.enqueue_cmd(buf) };
@@ -180,6 +186,33 @@ impl<'u> UdmaSpim<'u, Enabled> {
 
         self.write_cmd(&cmd_data);
         self.read_rx(data);
+    }
+
+    /// Can a new transfer be enqueued to the CMD channel?
+    ///
+    /// Returns 1 if another transfer can be enqueued, 0 otherwise
+    #[inline(always)]
+    fn can_enqueue_cmd(&self) -> bool {
+        let spim = &self.0;
+        spim.spim_cmd_cfg().read().pending().bit_is_clear()
+    }
+
+    /// Can a new transfer be enqueued to the TX channel?
+    ///
+    /// Returns 1 if another transfer can be enqueued, 0 otherwise
+    #[inline(always)]
+    fn can_enqueue_tx(&self) -> bool {
+        let spim = &self.0;
+        spim.spim_tx_cfg().read().pending().bit_is_clear()
+    }
+
+    /// Can a new transfer be enqueued to the RX channel?
+    ///
+    /// Returns 1 if another transfer can be enqueued, 0 otherwise
+    #[inline(always)]
+    fn can_enqueue_rx(&self) -> bool {
+        let spim = &self.0;
+        spim.spim_rx_cfg().read().pending().bit_is_clear()
     }
 
     /// # Safety
