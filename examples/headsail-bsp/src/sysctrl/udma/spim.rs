@@ -22,7 +22,7 @@ pub struct UdmaSpim<'u, UdmaPeriphState>(
 
 impl<'u> UdmaSpim<'u, Disabled> {
     /// Enables the uDMA clock gate for SPI-M
-    #[inline]
+    #[inline(always)]
     pub fn enable(self) -> UdmaSpim<'u, Enabled> {
         let spim = &self.0;
 
@@ -34,7 +34,7 @@ impl<'u> UdmaSpim<'u, Disabled> {
 }
 
 impl<'u> UdmaSpim<'u, Enabled> {
-    #[inline]
+    #[inline(always)]
     pub fn disable(self) -> UdmaSpim<'u, Disabled> {
         self.0.ctrl_cfg_cg().modify(|_r, w| w.cg_spim().clear_bit());
         UdmaSpim::<Disabled>(self.0, PhantomData)
@@ -43,12 +43,12 @@ impl<'u> UdmaSpim<'u, Enabled> {
     /// # Safety
     ///
     /// This will not configure the SPI-M in any way.
-    #[inline]
+    #[inline(always)]
     pub unsafe fn steal(udma: &'static pac::sysctrl::Udma) -> Self {
         Self(udma, PhantomData)
     }
 
-    #[inline]
+    #[inline(always)]
     pub fn write_tx(&mut self, buf: &[u8]) {
         // SAFETY: we spin lock on spim_tx_saddr to make sure the transfer is complete before
         // dropping the stack frame.
@@ -60,6 +60,7 @@ impl<'u> UdmaSpim<'u, Enabled> {
         while spim.spim_tx_saddr().read().bits() != 0 {}
     }
 
+    #[inline(always)]
     pub fn read_rx(&mut self, buf: &mut [u8]) {
         // SAFETY: we spin lock on spim_rx_saddr to make sure the transfer is complete before
         // dropping the stack frame.
@@ -70,6 +71,7 @@ impl<'u> UdmaSpim<'u, Enabled> {
         while spim.spim_rx_saddr().read().bits() != 0 {}
     }
 
+    #[inline(always)]
     pub fn write_cmd(&mut self, buf: &[u8]) {
         // SAFETY: we spin lock on spim_cmd_saddr to make sure the transfer is complete before
         // dropping the stack frame.
@@ -81,18 +83,21 @@ impl<'u> UdmaSpim<'u, Enabled> {
     }
 
     /// Send 'Start Of Transmission' (SOT) command
+    #[inline(always)]
     pub fn write_sot(&mut self) {
         let sot_cmd: [u8; 4] = SPI_CMD_SOT.to_ne_bytes();
         self.write_cmd(&sot_cmd);
     }
 
     /// Send 'End Of Transmission' (EOT) command
+    #[inline(always)]
     pub fn write_eot(&mut self) {
         let eot_cmd: [u8; 4] = (SPI_CMD_EOT).to_ne_bytes();
         self.write_cmd(&eot_cmd);
     }
 
     /// This function sends EOT (End Of Transmission) command but keeps the cs asserted.
+    #[inline(always)]
     pub fn write_eot_keep_cs(&mut self) {
         let eot_cmd: [u8; 4] = (SPI_CMD_EOT | 0x03).to_ne_bytes();
         self.write_cmd(&eot_cmd);
@@ -111,6 +116,7 @@ impl<'u> UdmaSpim<'u, Enabled> {
     ///     pim.send_dummy();
     /// }
     /// ```
+    #[inline(always)]
     pub fn write_dummy(&mut self) {
         let mut buffer: [u8; 4] = [0; 4];
         let cmd_cmd: [u8; 4] = (SPI_CMD_SEND_CMD_BASE | 0xFF).to_ne_bytes();
@@ -130,6 +136,7 @@ impl<'u> UdmaSpim<'u, Enabled> {
     ///   spim.eot();
     ///
     /// ```
+    #[inline(always)]
     pub fn send_data(&mut self, data: &[u8]) {
         let mut cmd_data: [u8; 12] = [0; 12];
 
@@ -158,6 +165,7 @@ impl<'u> UdmaSpim<'u, Enabled> {
     ///   spim.eot();
     ///
     /// ```
+    #[inline(always)]
     pub fn receive_data(&mut self, data: &mut [u8]) {
         let mut cmd_data: [u8; 12] = [0; 12];
 
@@ -178,6 +186,7 @@ impl<'u> UdmaSpim<'u, Enabled> {
     ///
     /// `buf` must outlive the transfer. Call `while spim.spim_*_saddr().read().bits() != 0 {}` or
     /// use an interrupt to determine when `buf` is safe to free.
+    #[inline(always)]
     unsafe fn enqueue_cmd(&mut self, buf: &[u8]) {
         let spim = &self.0;
 
@@ -195,6 +204,7 @@ impl<'u> UdmaSpim<'u, Enabled> {
     ///
     /// `buf` must outlive the transfer. Call `while spim.spim_*_saddr().read().bits() != 0 {}` or
     /// use an interrupt to determine when `buf` is safe to free.
+    #[inline(always)]
     unsafe fn enqueue_tx(&mut self, buf: &[u8]) {
         let spim = &self.0;
 
@@ -212,6 +222,7 @@ impl<'u> UdmaSpim<'u, Enabled> {
     ///
     /// `buf` must outlive the transfer. Call `while spim.spim_*_saddr().read().bits() != 0 {}` or
     /// use an interrupt to determine when `buf` is safe to free.
+    #[inline(always)]
     unsafe fn enqueue_rx(&mut self, buf: &[u8]) {
         let spim = &self.0;
 
