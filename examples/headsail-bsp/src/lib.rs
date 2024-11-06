@@ -55,6 +55,11 @@ pub mod sprintln;
 mod ufmt_panic;
 pub use ufmt;
 
+#[cfg(all(feature = "panic-apb-uart0", feature = "panic-sysctrl-uart"))]
+compile_error!(
+    "Features \"panic-apb-uart0\" and feature \"panic-sysctrl-uart\" cannot be enabled at the same time. Only one panic implementation must exist at a time."
+);
+
 pub mod apb_uart;
 pub mod mmap;
 mod mmio;
