@@ -256,7 +256,7 @@ impl<'u> UdmaSpim<'u, Enabled> {
     /// `buf` must outlive the transfer. Call `while spim.spim_*_saddr().read().bits() != 0 {}` or
     /// use an interrupt to determine when `buf` is safe to free.
     #[inline(always)]
-    unsafe fn enqueue_rx(&mut self, buf: &[u8]) {
+    unsafe fn enqueue_rx(&mut self, buf: &mut [u8]) {
         let spim = &self.0;
 
         // Write buffer location & len
