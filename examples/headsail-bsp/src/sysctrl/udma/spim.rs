@@ -84,21 +84,21 @@ impl<'u> UdmaSpim<'u, Enabled> {
 
     /// Send 'Start Of Transmission' (SOT) command
     #[inline(always)]
-    pub fn write_sot(&mut self) {
+    pub fn send_sot(&mut self) {
         let sot_cmd: [u8; 4] = SPI_CMD_SOT.to_ne_bytes();
         self.write_cmd(&sot_cmd);
     }
 
     /// Send 'End Of Transmission' (EOT) command
     #[inline(always)]
-    pub fn write_eot(&mut self) {
+    pub fn send_eot(&mut self) {
         let eot_cmd: [u8; 4] = (SPI_CMD_EOT).to_ne_bytes();
         self.write_cmd(&eot_cmd);
     }
 
     /// This function sends EOT (End Of Transmission) command but keeps the cs asserted.
     #[inline(always)]
-    pub fn write_eot_keep_cs(&mut self) {
+    pub fn send_eot_keep_cs(&mut self) {
         let eot_cmd: [u8; 4] = (SPI_CMD_EOT | 0x03).to_ne_bytes();
         self.write_cmd(&eot_cmd);
     }
