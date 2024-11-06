@@ -15,6 +15,11 @@ pub mod sysctrl;
 #[cfg(feature = "hpc")]
 pub use hpc::*;
 
+#[cfg(all(feature = "hpc", feature = "sysctrl"))]
+compile_error!(
+    "CPU-specific features \"hpc\" and feature \"sysctrl\" cannot be enabled at the same time. Select the one that matches the current target CPU."
+);
+
 #[cfg(feature = "alloc")]
 pub mod alloc;
 #[cfg(feature = "alloc")]
