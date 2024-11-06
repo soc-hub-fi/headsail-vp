@@ -21,6 +21,7 @@ pub struct UdmaSpim<'u, UdmaPeriphState>(
 );
 
 impl<'u> UdmaSpim<'u, Disabled> {
+    /// Enables the uDMA clock gate for SPI-M
     #[inline]
     pub fn enable(self) -> UdmaSpim<'u, Enabled> {
         let spim = &self.0;
