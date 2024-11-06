@@ -62,8 +62,12 @@ impl<'u> UdmaSpim<'u, Enabled> {
         while spim.spim_tx_saddr().read().bits() != 0 {}
     }
 
+    /// A potential `impl<'u> embedded_io::Read for UdmaSpim<'u, Enabled> {}`
+    #[deprecated = "UdmaSpim::read method is experimental and untested. If you see this method
+                    does what it's supposed to do useful, remove this deprecation notice from the \
+                    method definition."]
     #[inline(always)]
-    pub fn read_rx(&mut self, buf: &mut [u8]) {
+    pub fn read_rx(&mut self, buf: &mut [u8]) -> Result<usize, SpimError> {
         while !self.can_enqueue_rx() {}
 
         // SAFETY: we spin lock on spim_rx_saddr to make sure the transfer is complete before
@@ -73,6 +77,11 @@ impl<'u> UdmaSpim<'u, Enabled> {
         // Poll until finished (prevents `buf` leakage)
         let spim = &self.0;
         while spim.spim_rx_saddr().read().bits() != 0 {}
+
+        // TODO: is this a guarantee that we always read exactly `buf.len()`? Can we somehow
+        // identify how many bytes were actually read. This does sound reasonable if we're always
+        // doing block reads like we might do with an SD card.
+        Ok(buf.len())
     }
 
     #[inline(always)]
@@ -172,7 +181,7 @@ impl<'u> UdmaSpim<'u, Enabled> {
     ///
     /// ```
     #[inline(always)]
-    pub fn receive_data(&mut self, data: &mut [u8]) {
+    pub fn receive_data(&mut self, data: &mut [u8]) -> Result<usize, SpimError> {
         let mut cmd_data: [u8; 12] = [0; 12];
 
         cmd_data[0..4].copy_from_slice(
@@ -185,7 +194,8 @@ impl<'u> UdmaSpim<'u, Enabled> {
         );
 
         self.write_cmd(&cmd_data);
-        self.read_rx(data);
+
+        self.read_rx(data)
     }
 
     /// Can a new transfer be enqueued to the CMD channel?
@@ -280,30 +290,4 @@ impl embedded_io::Error for SpimError {
 
 impl<'u> ErrorType for UdmaSpim<'u, Enabled> {
     type Error = SpimError;
-}
-
-impl<'u> embedded_io::Read for UdmaSpim<'u, Enabled> {
-    fn read(&mut self, buf: &mut [u8]) -> Result<usize, Self::Error> {
-        let spim = self.0;
-        // Here's the UART version of `read` that would need to be ported to SPI-M:
-        /*
-        // Block until SPI-M reports data is available
-        while !self.0.read_ready() {}
-
-        // Block until device reports ability to enqueue
-        while !spim.spim_rx_cfg().read().pending().bit_is_set() {}
-
-        unsafe { self.enqueue_rx(buf) }
-
-        // Block again until the transfer is complete
-        while spim.spim_rx_saddr().read().bits() != 0 {}
-        */
-
-        // Retrieve data, signalling completion to device
-        buf.copy_from_slice(todo!() /*self.0.read_data()*/);
-        todo!();
-
-        // The return length should match the number of bytes that were copied from the device
-        Ok(todo!())
-    }
 }
