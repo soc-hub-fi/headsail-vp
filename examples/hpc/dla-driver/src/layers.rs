@@ -3,6 +3,8 @@ use crate::tensor4::{Order4, Tensor4};
 use crate::{Dla, InputSize, KernelSize, LayerConfig, Padding, SimdBitMode, Stride};
 use alloc::vec::Vec;
 
+use headsail_bsp::sprintln;
+
 use crate::utils::{calculate_conv2d_out_param_dim, get_banks_for_layer};
 
 // Define a trait for output handling
@@ -179,6 +181,52 @@ pub fn conv2d_bias_relu<T: DlaOutput + Clone>(
     )
 }
 
+pub fn grouped_conv2d<T: DlaOutput + Clone>(
+    input: Tensor3<i8>,
+    kernels: Tensor4<i8>,
+    bias: Vec<i16>,
+    padding: Option<Padding>,
+    stride: Option<Stride>,
+    mac_clip: Option<u32>,
+    pp_clip: Option<u32>,
+    simd_mode: Option<SimdBitMode>,
+    groups: usize
+) -> Tensor3<T> {
+    let total_in_channels = input.channels();
+    let total_out_channels = kernels.kernels();
+    let group_in_channels = total_in_channels / groups;
+    let group_out_channels = kernels.kernels() / groups;
+
+    // Placeholder for the output tensor
+    let mut output_tensors = Vec::new();
+
+    for g in 0..groups {
+        let input_group = input.slice_channels(g * group_in_channels..(g + 1)*group_in_channels);
+        let kernels_group = kernels.slice_channels(g * group_in_channels..(g + 1)*group_in_channels);
+        let bias_group = bias[g * group_out_channels..(g + 1) * group_out_channels].to_vec();
+
+        let output_group = run_layers(
+            input_group,
+            kernels_group,
+            Some(bias_group),
+            true,
+            false,
+            padding.clone(),
+            stride.clone(),
+            mac_clip,
+            pp_clip,
+            simd_mode,
+        );
+
+        output_tensors.push(output_group);
+    }
+
+    // Concatenate the output tensors along the channel dimension
+    Tensor3::concat_interleaved(output_tensors)
+
+}
+
+
 fn run_layers<T: DlaOutput + Clone>(
     input: Tensor3<i8>,
     kernels: Tensor4<i8>,
@@ -247,6 +295,7 @@ fn run_layers<T: DlaOutput + Clone>(
     dla.input_data_ready(true);
 
     while !dla.handle_handshake() {}
+
     let output_buffer = T::read_output(&dla, output_size.0 * output_size.1 * kernels.kernels());
 
     Tensor3::from_data_buffer(
