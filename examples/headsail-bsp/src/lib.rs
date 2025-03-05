@@ -49,7 +49,7 @@ pub mod timer {
 }
 
 // Print-implementation specific modules
-#[cfg(feature = "sprint-apb-uart0")]
+#[cfg(any(feature = "sprint-apb-uart0", feature = "sprint-apb-uart1"))]
 pub mod sprintln;
 #[cfg(any(
     feature = "panic-apb-uart0",
