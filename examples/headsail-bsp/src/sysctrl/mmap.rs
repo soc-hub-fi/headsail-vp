@@ -1,6 +1,6 @@
+//! SysCtrl-specific, SysCtrl internal memory maps
 // Allowed for extra clarity in certain cases
 #![allow(clippy::identity_op)]
-/// SysCtrl-specific, SysCtrl internal memory maps
 
 pub(crate) const SYSCTRL_ADDR: usize = 0x1a10_0000;
 
