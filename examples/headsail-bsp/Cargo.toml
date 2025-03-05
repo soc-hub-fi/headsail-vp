@@ -14,8 +14,10 @@ sysctrl-rt = [
     "riscv/critical-section-single-hart",
 ]
 panic-apb-uart0 = ["sprint-apb-uart0"]
+panic-apb-uart1 = ["sprint-apb-uart1"]
 panic-sysctrl-uart = ["sysctrl-pac"]
 sprint-apb-uart0 = []
+sprint-apb-uart1 = []
 hpc = ["dep:riscv-pac", "dep:riscv-peripheral"]
 sysctrl = []
 alloc = ["dep:good_memory_allocator", "hpc"]

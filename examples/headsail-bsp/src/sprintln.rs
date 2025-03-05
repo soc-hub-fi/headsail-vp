@@ -1,5 +1,9 @@
 //! Macros to implement Rust-style print formatting using `sprint`/`sprintln`
-pub const UART: crate::apb_uart::ApbUart0 = unsafe { crate::apb_uart::ApbUart0::instance() };
+#[cfg(feature = "sprint-apb-uart0")]
+pub type Serial = crate::apb_uart::ApbUart0;
+#[cfg(feature = "sprint-apb-uart1")]
+pub type Serial = crate::apb_uart::ApbUart1;
+pub const UART: Serial = unsafe { Serial::instance() };
 
 #[macro_export]
 macro_rules! sprint {
