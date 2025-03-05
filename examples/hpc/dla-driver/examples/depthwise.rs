@@ -4,7 +4,7 @@
 #[macro_use]
 extern crate alloc;
 
-use headsail_bsp::{init_alloc, rt::entry, sprint, sprintln};
+use headsail_bsp::{init_heap, rt::entry, sprint, sprintln};
 use panic_halt as _;
 
 use dla_driver::tensor3::{Order3, Tensor3};
@@ -102,7 +102,8 @@ fn conv_test() {
 
 #[entry]
 fn main() -> ! {
-    init_alloc();
+    // Safety: init heap is called once only
+    unsafe { init_heap() };
     conv_test();
 
     loop {}
