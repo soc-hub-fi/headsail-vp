@@ -51,11 +51,18 @@ pub mod timer {
 // Print-implementation specific modules
 #[cfg(feature = "sprint-apb-uart0")]
 pub mod sprintln;
-#[cfg(any(feature = "panic-apb-uart0", feature = "panic-sysctrl-uart"))]
+#[cfg(any(
+    feature = "panic-apb-uart0",
+    feature = "panic-apb-uart1",
+    feature = "panic-sysctrl-uart"
+))]
 mod ufmt_panic;
 pub use ufmt;
 
-#[cfg(all(feature = "panic-apb-uart0", feature = "panic-sysctrl-uart"))]
+#[cfg(all(
+    any(feature = "panic-apb-uart0", feature = "panic-apb-uart1"),
+    feature = "panic-sysctrl-uart"
+))]
 compile_error!(
     "Features \"panic-apb-uart0\" and feature \"panic-sysctrl-uart\" cannot be enabled at the same time. Only one panic implementation must exist at a time."
 );

@@ -15,6 +15,7 @@ sysctrl-rt = ["headsail-bsp/sysctrl-rt", "rt"]
 
 rt = ["headsail-bsp/panic-apb-uart0"]
 panic-apb-uart0 = ["headsail-bsp/panic-apb-uart0"]
+panic-apb-uart1 = ["headsail-bsp/panic-apb-uart1"]
 
 [dependencies]
 headsail-bsp = { version = "0.1.0", path = "../headsail-bsp" }

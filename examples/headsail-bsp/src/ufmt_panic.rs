@@ -32,20 +32,20 @@ impl uDisplay for PanicInfoWrapper<'_> {
     }
 }
 
-#[cfg(feature = "panic-apb-uart0")]
+#[cfg(any(feature = "panic-apb-uart0", feature = "panic-apb-uart1"))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
+    #[cfg(feature = "panic-apb-uart0")]
+    type Serial = crate::apb_uart::ApbUart0;
+    #[cfg(feature = "panic-apb-uart1")]
+    type Serial = crate::apb_uart::ApbUart1;
+
     if !unsafe { crate::ufmt_panic::PANIC_UART_IS_INIT } {
         // If UART is not already initialized, init with hale mary values
-        crate::apb_uart::ApbUart0::init(30_000_000, 115_200);
+        Serial::init(30_000_000, 115_200);
     }
 
-    ufmt::uwrite!(
-        unsafe { crate::apb_uart::ApbUart0::instance() },
-        "{}",
-        PanicInfoWrapper(info)
-    )
-    .unwrap();
+    ufmt::uwrite!(unsafe { Serial::instance() }, "{}", PanicInfoWrapper(info)).unwrap();
 
     loop {}
 }
