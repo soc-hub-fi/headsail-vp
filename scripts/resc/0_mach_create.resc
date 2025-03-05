@@ -6,8 +6,11 @@ machine LoadPlatformDescription $ORIGIN/../../vp/devel/headsail.repl
 
 emulation CreateUartPtyTerminal "term0" "/tmp/uart0" True
 emulation CreateUartPtyTerminal "term1" "/tmp/uart1" True
+emulation CreateUartPtyTerminal "term2" "/tmp/uart2" True
 connector Connect sysbus.apb_uart_0 term0
 connector Connect sysbus.apb_uart_1 term1
+connector Connect sysbus.udma_uart term2
 
 showAnalyzer sysbus.apb_uart_0
 :showAnalyzer sysbus.apb_uart_1
+:showAnalyzer sysbus.udma_uart
