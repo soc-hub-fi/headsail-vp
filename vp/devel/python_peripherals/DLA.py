@@ -1183,7 +1183,7 @@ class Dla:
                 res = execute_for_all_elements(self.mac.relu_native, res)
 
         # Prevent overflowing i16 range
-# NOTE: (20250312 vaino-waltteri.granat@tuni.fi) Some CI tests expect 32-bit output, which is not supported on ASIC but is supported by VP. Make this option only available in CI.
+        # NOTE: (20250312 vaino-waltteri.granat@tuni.fi) Some CI tests expect 32-bit output, which is not supported on ASIC but is supported by VP. Make this option only available in CI.
         if output_bit_width == 32 and os.environ.get("CI"):
             self.write_output(res, 32)
         else:
