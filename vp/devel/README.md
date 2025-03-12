@@ -10,3 +10,9 @@ The VP is structured as follows:
 | :-           | :-      |
 | headsail.repl  | Defines all headsail CPUs, memories and peripherals |
 
+## Supported environment variables
+
+| Variable     | Purpose |
+| :-:          | :- |
+| DLA_VP_QUIET | Suppresses stdout |
+| DLA_VP_OUT32 | Enable 32-bit output |
