@@ -183,6 +183,9 @@ jobs:
       image: antmicro/renode:1.14.0
       options: --user root
 
+    env:
+      # Enable 32-bit output, required for this test case
+      DLA_VP_OUT32: 1
     steps:
     - uses: actions/checkout@v4
     - name: Download artifact
