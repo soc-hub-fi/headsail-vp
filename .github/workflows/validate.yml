@@ -8,6 +8,7 @@ on:
 
 env:
   CI: 1
+  DLA_VP_QUIET: 1
   CARGO_TERM_COLOR: always
   RENODE_DIR: /opt/renode/
   # Used by renode-test to generate snapshots of failed tests

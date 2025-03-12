@@ -1617,8 +1617,7 @@ if __name__ == "__main__":
 else:
     if request.isInit:
         # Supress all python print in CI
-        is_ci = os.environ.get("CI")
-        if not is_ci == None:
+        if os.environ.get("DLA_VP_QUIET"):
             sys.stdout = open(os.devnull, "w")
 
         # Initialized DLA

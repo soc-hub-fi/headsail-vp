@@ -14,5 +14,5 @@ The VP is structured as follows:
 
 | Variable     | Purpose |
 | :-:          | :- |
-| CI           | Suppresses stdout |
+| DLA_VP_QUIET | Suppresses stdout |
 | DLA_VP_OUT32 | Enable 32-bit output |
