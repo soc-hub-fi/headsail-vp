@@ -1,5 +1,20 @@
 # Headsail - Virtual Platform
 
+High-level virtual prototype of the "bare metal" of Headsail, along with software support to deploy
+validation tests and applications on it, focused on Rust-software support especially.
+
+What this VP is good for:
+
+- Prototyping MMIO-based Rust drivers and bare metal applications targeting one or more of the cores.
+- Prototyping C applications without the C standard library.
+- Testing out toolchains and integrations including a C codebase with Rust FFI, e.g., [Apache TVM BYOC](https://tvm.apache.org/2020/07/15/how-to-bring-your-own-codegen-to-tvm) (N.b., note of obsolescence: BYOC is no longer supported by TVM)
+- Prototyping the Linux boot toolchain
+
+What this VP is not good for:
+
+- Leveraging more advanced PULP platform software functionality including the more elaborate uDMA drivers and semihosting. Use [pulp-sdk](https://github.com/pulp-platform/pulp-sdk/) instead.
+- Writing C applications leveraging the C standard library. Port newlib and build on that instead.
+
 ## Directories
 
 | Directory | Description                       |
